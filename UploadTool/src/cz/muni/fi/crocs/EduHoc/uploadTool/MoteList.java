@@ -6,6 +6,7 @@
 package cz.muni.fi.crocs.EduHoc.uploadTool;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -26,6 +27,7 @@ public class MoteList {
     public MoteList(String filepath) {
         this.filepath = filepath;
         motes = new ArrayList<String>();
+        readFile();
     }
 
     private void readFile() {
@@ -33,14 +35,27 @@ public class MoteList {
             BufferedReader reader = new BufferedReader(new FileReader(filepath));
             String line = reader.readLine();
             while (line != null) {
-                motes.add(line);
+                
+                if(line.charAt(0)!='#'){
+                    
+                    
+                    File mote = new File(line);
+                    
+                    if(mote.exists()){
+                        motes.add(line);
+                        
+                    } else {
+                        //System.err.println("mote " + line + " not found");
+                    }
+                }
                 line = reader.readLine();
             }
+            System.out.println(motes.size() + " motes available");
 
         } catch (FileNotFoundException ex) {
-
+            System.err.println("file not found");
         } catch (IOException ex) {
-            Logger.getLogger(MoteList.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("read line failed");
         }
     }
 

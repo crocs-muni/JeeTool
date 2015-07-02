@@ -17,11 +17,24 @@ public class UploadThread implements Runnable {
 
     private String projectPath;
     private int mode = 0;
+    private String mote;
+    
+    public UploadThread(String projectPath, String mote) {
+        this.projectPath = projectPath;
+        this.mote = mote;
+    }
 
     public UploadThread(String projectPath) {
         this.projectPath = projectPath;
+        this.mote = "";
     }
 
+    /**
+     * set mode of make
+     *
+     * @param mode mode 0 for make mode 1 for make upload mode 2 for make clean
+     * default mode is 0
+     */
     public void select(int mode) {
         this.mode = mode;
     }
@@ -36,17 +49,20 @@ public class UploadThread implements Runnable {
             switch (mode) {
                 case 0:
                     writer.appendToFile("make");
+                    System.out.println("Calling make on target " + projectPath);
                     break;
                 case 1:
-                    writer.appendToFile("make upload");
+                    writer.appendToFile("make upload MONITOR_PORT="+mote);
+                    System.out.println("Calling make upload on target " + projectPath);
                     break;
                 case 2:
                     writer.appendToFile("make clean");
+                    System.out.println("Calling make clean on target " + projectPath);
                     break;
                 default:
                     writer.appendToFile("make");
+                    System.out.println("Calling make on target " + projectPath);
                     break;
-
             }
 
             //writer.appendToFile("ls");

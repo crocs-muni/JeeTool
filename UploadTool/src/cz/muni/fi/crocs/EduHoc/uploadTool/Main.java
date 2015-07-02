@@ -6,9 +6,8 @@
 package cz.muni.fi.crocs.EduHoc.uploadTool;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -42,25 +41,51 @@ public class Main {
             return;
         }
         System.out.println("Makefile " + makefile.getPath() + " found");
-        
-        UploadThread t1 = new UploadThread(projectPath);
-        
-        
-        //if specified, create new thread for every 
-        new Thread(t1).start();
-                
-        
+
+        List<String> argsList = Arrays.asList(args);
+
+        if (argsList.contains("-m")) {
+            UploadThread t1 = new UploadThread(projectPath);
+            t1.select(0);
+            t1.run();
+
+        } else if (argsList.contains("-c")) {
+            UploadThread t1 = new UploadThread(projectPath);
+            t1.select(2);
+            t1.run();
+
+        } else if (argsList.contains("-u")) {
+            for (String motePath : moteList.getMotes()) {
+                UploadThread t1 = new UploadThread(projectPath, motePath);
+                t1.select(1);
+                t1.run();
+            }
+
+        } else if (argsList.contains("-t")) {
+            UploadThread t0 = new UploadThread(projectPath);
+            t0.select(0);
+            t0.run();
+            
+            for (String motePath : moteList.getMotes()) {
+                UploadThread t1 = new UploadThread(projectPath, motePath);
+                t1.select(1);
+                //if specified, create new thread for every 
+                new Thread(t1).start();
+            }
+        }
+
     }
 
     public static void help() {
         System.out.println("Arduino mote tool");
         System.out.println("help:");
         System.out.println("provide path to makefile as first parameter");
-        /*
-         System.out.println("and optionally other options as follows");
-         System.out.println("-t  use multithreaded upload");
-         System.out.println("-v  verbose");
-         System.out.println("-m  mute");        
-         */
+
+        System.out.println("and optionally one other options as follows");
+        System.out.println("-m  make");
+        System.out.println("-c  make clean");
+        System.out.println("-u  make upload");
+        System.out.println("-t  use multithreaded upload, -u is already included in -t");
+
     }
 }

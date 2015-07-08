@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.muni.fi.crocs.EduHoc.CppCommon;
+package cz.muni.fi.crocs.EduHoc.Serial;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,12 +14,12 @@ import java.io.IOException;
  *
  * @author LukeMcNemee
  */
-public class CppFileParser {
+public class CppDefineParser {
 
     private String filepath;
     private File file;
 
-    public CppFileParser(String filepath) throws IOException {
+    public CppDefineParser(String filepath) throws IOException {
         this.filepath = filepath;
         this.file = new File(filepath);
         if (!file.exists()) {

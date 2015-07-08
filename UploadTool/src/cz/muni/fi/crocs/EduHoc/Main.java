@@ -3,15 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.muni.fi.crocs.EduHoc.uploadTool;
+package cz.muni.fi.crocs.EduHoc;
 
-import cz.muni.fi.crocs.EduHoc.CppCommon.CppFileParser;
+import cz.muni.fi.crocs.EduHoc.uploadTool.MoteList;
+import cz.muni.fi.crocs.EduHoc.uploadTool.UploadThread;
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -24,23 +22,14 @@ public class Main {
      */
     public static void main(String[] args) {
         String filepath = System.getenv("EDU_HOC_HOME") + "/config/motePaths.txt";
-        System.out.println(filepath);
-        try {
-            CppFileParser cpp = new CppFileParser(System.getenv("EDU_HOC_HOME") + "/src/common.h");
-            System.out.println(Integer.parseInt(cpp.findDefine("SERIAL_FREQUENCY")));
-        } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
         
-        
-        /*
         MoteList moteList = new MoteList(filepath);
         if (args.length == 0) {
             System.err.println("Please provide path to makefile");
             help();
             return;
         }
-        File makefile = null;
+        File makefile;
         String projectPath = args[0];
         if (projectPath.charAt(projectPath.length() - 1) == '/') {
             makefile = new File(projectPath + "Makefile");
@@ -86,7 +75,7 @@ public class Main {
                 new Thread(t1).start();
             }
         }
-            */    
+               
     }
 
 

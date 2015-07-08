@@ -5,9 +5,13 @@
  */
 package cz.muni.fi.crocs.EduHoc.uploadTool;
 
+import cz.muni.fi.crocs.EduHoc.CppCommon.CppFileParser;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -21,6 +25,15 @@ public class Main {
     public static void main(String[] args) {
         String filepath = System.getenv("EDU_HOC_HOME") + "/config/motePaths.txt";
         System.out.println(filepath);
+        try {
+            CppFileParser cpp = new CppFileParser(System.getenv("EDU_HOC_HOME") + "/src/common.h");
+            System.out.println(Integer.parseInt(cpp.findDefine("SERIAL_FREQUENCY")));
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        /*
         MoteList moteList = new MoteList(filepath);
         if (args.length == 0) {
             System.err.println("Please provide path to makefile");
@@ -73,8 +86,9 @@ public class Main {
                 new Thread(t1).start();
             }
         }
-
+            */    
     }
+
 
     public static void help() {
         System.out.println("Arduino mote tool");

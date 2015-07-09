@@ -25,12 +25,10 @@ public class SerialPortHandler {
     public void connect(String portName) throws IOException {
         try {
             // Obtain a CommPortIdentifier object for the port you want to open
-            CommPortIdentifier portId
-                    = CommPortIdentifier.getPortIdentifier(portName);
+            CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(portName);
 
             // Get the port's ownership
-            serialPort
-                    = (SerialPort) portId.open("Demo application", 5000);
+            serialPort = (SerialPort) portId.open("JeeTool", 5000);
 
             // Set the parameters of the connection.
             setSerialPortParameters();
@@ -78,7 +76,7 @@ public class SerialPortHandler {
             // Set serial port to 57600bps-8N1..my favourite
             serialPort.setSerialPortParams(baudRate, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
             serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_NONE);
-            
+
         } catch (UnsupportedCommOperationException ex) {
             throw new IOException("Unsupported serial port parameter");
         }

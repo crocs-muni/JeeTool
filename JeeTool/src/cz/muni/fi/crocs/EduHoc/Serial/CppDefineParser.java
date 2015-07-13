@@ -19,6 +19,17 @@ public class CppDefineParser {
     private String filepath;
     private File file;
 
+    private boolean silent = false;
+    private boolean verbose = false;
+    
+    public void setVerbose(){
+        verbose = true;
+    }
+    
+    public void setSilent(){
+        silent = true;
+    }
+    
     public CppDefineParser(String filepath) throws IOException {
         this.filepath = filepath;
         this.file = new File(filepath);

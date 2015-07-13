@@ -19,6 +19,17 @@ class ExecuteShellCommand {
 
     private List<String> commands;
 
+    private boolean silent = false;
+    private boolean verbose = false;
+    
+    public void setVerbose(){
+        verbose = true;
+    }
+    
+    public void setSilent(){
+        silent = true;
+    }
+    
     public ExecuteShellCommand() {
         commands = new ArrayList<String>();
     }

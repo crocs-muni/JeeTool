@@ -19,6 +19,17 @@ public class FileWriter {
     private File file;
     private BufferedWriter bw;
 
+    private boolean silent = false;
+    private boolean verbose = false;
+    
+    public void setVerbose(){
+        verbose = true;
+    }
+    
+    public void setSilent(){
+        silent = true;
+    }
+    
     public FileWriter() throws IOException {
         filename = "tmpScript_" + Thread.currentThread().getName().toString() + ".sh";
         file = new File(filename);

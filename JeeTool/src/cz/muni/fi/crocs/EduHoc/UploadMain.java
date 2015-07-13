@@ -6,7 +6,6 @@
 
 package cz.muni.fi.crocs.EduHoc;
 
-import static cz.muni.fi.crocs.EduHoc.Main.help;
 import cz.muni.fi.crocs.EduHoc.uploadTool.MoteList;
 import java.io.File;
 
@@ -18,6 +17,17 @@ public class UploadMain {
     private MoteList motelist;
     private File makefile;
     private String projectPath;
+    
+    private boolean silent = false;
+    private boolean verbose = false;
+    
+    public void setVerbose(){
+        verbose = true;
+    }
+    
+    public void setSilent(){
+        silent = true;
+    }
     
     
     public UploadMain(MoteList motelist, String projectPath) {
@@ -33,7 +43,6 @@ public class UploadMain {
         System.out.println("processing makefile for project at " + projectPath);
         if (!makefile.exists()) {
             System.err.println("makefile not found");
-            Main.help();
             return;
         }
         System.out.println("Makefile " + makefile.getPath() + " found");

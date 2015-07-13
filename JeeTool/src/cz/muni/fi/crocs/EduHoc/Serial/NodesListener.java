@@ -9,9 +9,6 @@ package cz.muni.fi.crocs.EduHoc.Serial;
 import cz.muni.fi.crocs.EduHoc.uploadTool.MoteList;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -21,6 +18,16 @@ public class NodesListener {
     private MoteList motes;
     private String filePath;
     
+    private boolean silent = false;
+    private boolean verbose = false;
+    
+    public void setVerbose(){
+        verbose = true;
+    }
+    
+    public void setSilent(){
+        silent = true;
+    }
     
     public NodesListener(MoteList motes, String filePath) {
         this.motes = motes;

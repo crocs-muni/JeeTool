@@ -21,7 +21,17 @@ public class MoteList {
 
     private String filepath;
     private List<String> motes;
-
+    private boolean silent = false;
+    private boolean verbose = false;
+    
+    public void setVerbose(){
+        verbose = true;
+    }
+    
+    public void setSilent(){
+        silent = true;
+    }
+    
     public MoteList(String filepath) {
         this.filepath = filepath;
         motes = new ArrayList<String>();

@@ -19,6 +19,17 @@ public class UploadThread implements Runnable {
     private int mode = 0;
     private String mote;
     
+    private boolean silent = false;
+    private boolean verbose = false;
+    
+    public void setVerbose(){
+        verbose = true;
+    }
+    
+    public void setSilent(){
+        silent = true;
+    }
+    
     public UploadThread(String projectPath, String mote) {
         this.projectPath = projectPath;
         this.mote = mote;

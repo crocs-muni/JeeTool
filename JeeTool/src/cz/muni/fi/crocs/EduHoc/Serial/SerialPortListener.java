@@ -21,6 +21,17 @@ public class SerialPortListener implements Runnable{
     private InputStream is;
     private File file;
 
+    private boolean silent = false;
+    private boolean verbose = false;
+    
+    public void setVerbose(){
+        verbose = true;
+    }
+    
+    public void setSilent(){
+        silent = true;
+    }
+    
     public SerialPortListener(SerialPortHandler handler, File file) {
         this.handler = handler;
         this.file = file;

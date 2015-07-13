@@ -22,6 +22,17 @@ public class SerialPortHandler {
     private OutputStream outStream;
     private InputStream inStream;
 
+    private boolean silent = false;
+    private boolean verbose = false;
+    
+    public void setVerbose(){
+        verbose = true;
+    }
+    
+    public void setSilent(){
+        silent = true;
+    }
+    
     public void connect(String portName) throws IOException {
         try {
             // Obtain a CommPortIdentifier object for the port you want to open

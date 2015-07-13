@@ -11,5 +11,14 @@ package cz.muni.fi.crocs.EduHoc;
  * @author LukeMcNemee
  */
 public class SerialMain {
+    private boolean silent = false;
+    private boolean verbose = false;
     
+    public void setVerbose(){
+        verbose = true;
+    }
+    
+    public void setSilent(){
+        silent = true;
+    }
 }

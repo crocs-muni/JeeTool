@@ -17,15 +17,15 @@ import org.apache.commons.cli.Options;
 public class OptionsMain {
 
     public static Options createOptions() {
-        Option help = new Option("h", "help", false, "show help");
+        Option help = new Option("h", "help", false, "show help and exit");
 
         Option motes = new Option("a", "motes", true, "path to alternative file of motes, default setting is stored in confix/motePaths.txt");
-        motes.setRequired(true);
+        
 
         Option detect = new Option("d", "detect", false, "Perform node detection only");
 
-        Option verbose = new Option("v", "verbose", false, "extended text output");
-        Option silent = new Option("s", "silent", false, "do not show text output");
+        Option verbose = new Option("v", "verbose", false, "show extended text output");
+        Option silent = new Option("s", "silent", false, "show limited text output");
         OptionGroup output = new OptionGroup();
         output.addOption(verbose);
         output.addOption(silent);
@@ -66,4 +66,6 @@ public class OptionsMain {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("jeetool", header, options, footer, false);
     }
+    
+    
 }

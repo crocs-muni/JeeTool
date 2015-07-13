@@ -5,13 +5,18 @@
  */
 package cz.muni.fi.crocs.EduHoc;
 
-import com.sun.org.apache.xpath.internal.compiler.OpCodes;
 import cz.muni.fi.crocs.EduHoc.uploadTool.MoteList;
 import cz.muni.fi.crocs.EduHoc.uploadTool.UploadThread;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 /**
  *
@@ -23,20 +28,41 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        System.out.println("JeeTool \n");        
+        
         
         Options options = OptionsMain.createOptions();
-        OptionsMain.printHelp(options);
         
-        
-        /*
-        String filepath = System.getenv("EDU_HOC_HOME") + "/config/motePaths.txt";
-        
-        MoteList moteList = new MoteList(filepath);
-        if (args.length == 0) {
-            System.err.println("Please provide path to makefile");
-            help();
+        CommandLineParser parser = new DefaultParser();
+        CommandLine cmd;
+        try {
+            cmd = parser.parse( options, args);
+        } catch (ParseException ex) {
+            System.err.println("cannot parse parameters");
+            OptionsMain.printHelp(options);
+            System.err.println(ex.toString());
             return;
         }
+        boolean silent = cmd.hasOption("s");
+        boolean verbose = cmd.hasOption("v");
+        
+        if(!silent) System.out.println("EduHoc home is: " + System.getenv("EDU_HOC_HOME") + "\n");
+        
+        if(cmd.hasOption("h")){
+            OptionsMain.printHelp(options);
+            return;
+        }        
+        
+        String filepath;
+        if(cmd.hasOption("a")){
+            filepath = cmd.getOptionValue("a");
+        } else {
+            filepath = System.getenv("EDU_HOC_HOME") + "/config/motePaths.txt";        
+        }
+        MoteList moteList = new MoteList(filepath);
+        
+        if(verbose) System.out.println("reading motelist from file " + filepath);
+        
         
         UploadMain upload = new UploadMain(moteList, args[0]);
         File makefile;
@@ -49,7 +75,7 @@ public class Main {
         System.out.println("processing makefile for project at " + projectPath);
         if (!makefile.exists()) {
             System.err.println("makefile not found");
-            help();
+            //help();
             return;
         }
         System.out.println("Makefile " + makefile.getPath() + " found");
@@ -85,23 +111,12 @@ public class Main {
                 new Thread(t1).start();
             }
         }
-                */
+               
         
         
                
     }
 
 
-    public static void help() {
-        System.out.println("Arduino mote tool");
-        System.out.println("help:");
-        System.out.println("provide path to makefile as first parameter");
-
-        System.out.println("and optionally one other options as follows");
-        System.out.println("-m  make");
-        System.out.println("-c  make clean");
-        System.out.println("-u  make upload");
-        System.out.println("-t  use multithreaded upload, -u is already included in -t");
-
-    }
+    
 }

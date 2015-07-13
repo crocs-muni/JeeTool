@@ -15,21 +15,21 @@ import java.util.List;
  *
  * @author LukeMcNemee
  */
-class ExecuteShellCommand {
+public class ExecuteShellCommand {
 
     private List<String> commands;
 
     private boolean silent = false;
     private boolean verbose = false;
-    
-    public void setVerbose(){
+
+    public void setVerbose() {
         verbose = true;
     }
-    
-    public void setSilent(){
+
+    public void setSilent() {
         silent = true;
     }
-    
+
     public ExecuteShellCommand() {
         commands = new ArrayList<String>();
     }
@@ -40,7 +40,9 @@ class ExecuteShellCommand {
 
     public void executeCommand(String command) throws IOException {
 
-        if(verbose) System.out.println("Executing shell command " + command);
+        if (verbose) {
+            System.out.println("Executing shell command " + command);
+        }
         Process cmdProc = Runtime.getRuntime().exec(command);
 
         BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(cmdProc.getInputStream()));
@@ -51,11 +53,12 @@ class ExecuteShellCommand {
 
         BufferedReader stderrReader = new BufferedReader(new InputStreamReader(cmdProc.getErrorStream()));
         while ((line = stderrReader.readLine()) != null) {
-            if(!silent) System.err.println(line);
+            if (!silent) {
+                System.err.println(line);
+            }
         }
 
         //int retValue = cmdProc.exitValue();
-
     }
 
 }

@@ -42,7 +42,9 @@ public class OptionsMain {
 
         Option listen = new Option("l", "listen", true, "connect to serial and save stream to files, set path to directory for files");
         Option write = new Option("w", "write", true, "write to serial now or after upload, directory must contain at least one file with same name as node");
-
+        
+        Option execute = new Option("E", "execute", true, "path to shell script to be executed in phase 3");
+        
         Options options = new Options();
 
         options.addOption(help);
@@ -55,12 +57,15 @@ public class OptionsMain {
 
         options.addOption(threads);
         options.addOption(write);
+        
+        options.addOption(execute);
 
         return options;
     }
 
     public static void printHelp(Options options) {
-        String header = "JeeTool, tool for mass management of arduino network\n\n";
+        String header = "JeeTool, tool for mass management of arduino network\n\n"
+                + "There are four phases : \n 1 - node detection \n 2 - make execution \n 3 - script execution \n 4 - serial listen / write\n\n";
         String footer = "";
 
         HelpFormatter formatter = new HelpFormatter();

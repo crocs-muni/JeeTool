@@ -17,13 +17,17 @@ import java.io.OutputStream;
  */
 public class SerialPortListener implements Runnable{
 
+    private SerialPortHandler handler;
     private InputStream is;
     private File file;
 
-    public SerialPortListener(InputStream is, String filename) {
-        this.is = is;
-        this.file = new File(filename);
+    public SerialPortListener(SerialPortHandler handler, File file) {
+        this.handler = handler;
+        this.file = file;
+        
+        this.is = handler.getSerialInputStream();
     }
+
 
     public void streamToFile() throws  IOException {
         OutputStream os = new FileOutputStream(file);
@@ -32,6 +36,7 @@ public class SerialPortListener implements Runnable{
         int bytesRead;
         while ((bytesRead = is.read(buffer)) != -1) {
             os.write(buffer, 0, bytesRead);
+            os.flush();
         }
         is.close();
         os.close();        

@@ -5,11 +5,13 @@
  */
 package cz.muni.fi.crocs.EduHoc;
 
+import com.sun.org.apache.xpath.internal.compiler.OpCodes;
 import cz.muni.fi.crocs.EduHoc.uploadTool.MoteList;
 import cz.muni.fi.crocs.EduHoc.uploadTool.UploadThread;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.commons.cli.Options;
 
 /**
  *
@@ -21,6 +23,12 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        
+        Options options = OptionsMain.createOptions();
+        OptionsMain.printHelp(options);
+        
+        
+        /*
         String filepath = System.getenv("EDU_HOC_HOME") + "/config/motePaths.txt";
         
         MoteList moteList = new MoteList(filepath);
@@ -29,6 +37,8 @@ public class Main {
             help();
             return;
         }
+        
+        UploadMain upload = new UploadMain(moteList, args[0]);
         File makefile;
         String projectPath = args[0];
         if (projectPath.charAt(projectPath.length() - 1) == '/') {
@@ -75,6 +85,9 @@ public class Main {
                 new Thread(t1).start();
             }
         }
+                */
+        
+        
                
     }
 

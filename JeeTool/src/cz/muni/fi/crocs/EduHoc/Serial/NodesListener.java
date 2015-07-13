@@ -7,6 +7,7 @@
 package cz.muni.fi.crocs.EduHoc.Serial;
 
 import cz.muni.fi.crocs.EduHoc.uploadTool.MoteList;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -29,12 +30,15 @@ public class NodesListener {
     public void Start(){
         for(String mote: motes.getMotes()){
             try {
-                SerialPortHandler handler = new SerialPortHandler();
+                //open serial port and connect to it
+                SerialPortHandler handler = new SerialPortHandler();                
                 handler.connect(mote);
-                InputStream is = handler.getSerialInputStream();
-                String file = null;
-                SerialPortListener listener = new SerialPortListener(is, file);
                 
+                //create file for each node
+                File file = new File(filePath, mote.substring(mote.lastIndexOf("/")));
+                SerialPortListener listener = new SerialPortListener(handler, file); 
+                
+                new Thread(listener).start();
                 
             } catch (IOException ex) {
                 System.err.println("port connection to " + mote + " failed");

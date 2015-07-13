@@ -5,6 +5,7 @@
  */
 package cz.muni.fi.crocs.EduHoc.uploadTool;
 
+import cz.muni.fi.crocs.EduHoc.Main;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +33,9 @@ public class FileWriter {
     
     public FileWriter() throws IOException {
         filename = "tmpScript_" + Thread.currentThread().getName().toString() + ".sh";
+        if(verbose){
+            System.out.println("Tmp script created at: " + filename + ", will be deleted on exit.");
+        }
         file = new File(filename);
         file.deleteOnExit();
         bw = new BufferedWriter(new java.io.FileWriter(file));
@@ -40,6 +44,9 @@ public class FileWriter {
     public void appendToFile(String text) throws IOException{
         bw.write(text);
         bw.newLine();
+        if(verbose){
+            System.out.println("Text added to script: " + Main.ANSI_CYAN + text + Main.ANSI_RESET);
+        }
     }
     
     public void close() throws IOException {

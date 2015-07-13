@@ -40,6 +40,7 @@ class ExecuteShellCommand {
 
     public void executeCommand(String command) throws IOException {
 
+        if(verbose) System.out.println("Executing shell command " + command);
         Process cmdProc = Runtime.getRuntime().exec(command);
 
         BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(cmdProc.getInputStream()));
@@ -50,7 +51,7 @@ class ExecuteShellCommand {
 
         BufferedReader stderrReader = new BufferedReader(new InputStreamReader(cmdProc.getErrorStream()));
         while ((line = stderrReader.readLine()) != null) {
-            System.err.println(line);
+            if(!silent) System.err.println(line);
         }
 
         //int retValue = cmdProc.exitValue();

@@ -6,7 +6,7 @@
 package cz.muni.fi.crocs.EduHoc;
 
 import cz.muni.fi.crocs.EduHoc.uploadTool.MoteList;
-import cz.muni.fi.crocs.EduHoc.uploadTool.UploadThread;
+import cz.muni.fi.crocs.EduHoc.uploadTool.MakeThread;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +24,11 @@ import org.apache.commons.cli.ParseException;
  */
 public class Main {
 
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_CYAN = "\u001B[36m";
+    
     /**
      * @param args the command line arguments
      */
@@ -48,70 +53,39 @@ public class Main {
         
         if(!silent) System.out.println("EduHoc home is: " + System.getenv("EDU_HOC_HOME") + "\n");
         
+        //help
         if(cmd.hasOption("h")){
             OptionsMain.printHelp(options);
             return;
         }        
         
         String filepath;
+        //path to config list of nodes
         if(cmd.hasOption("a")){
             filepath = cmd.getOptionValue("a");
         } else {
             filepath = System.getenv("EDU_HOC_HOME") + "/config/motePaths.txt";        
         }
+        
+        //create motelist
         MoteList moteList = new MoteList(filepath);
+        if(verbose) moteList.setVerbose();
+        if(silent) moteList.setSilent();
+        
         
         if(verbose) System.out.println("reading motelist from file " + filepath);
         
-        
-        UploadMain upload = new UploadMain(moteList, args[0]);
-        File makefile;
-        String projectPath = args[0];
-        if (projectPath.charAt(projectPath.length() - 1) == '/') {
-            makefile = new File(projectPath + "Makefile");
-        } else {
-            makefile = new File(projectPath + "/Makefile");
-        }
-        System.out.println("processing makefile for project at " + projectPath);
-        if (!makefile.exists()) {
-            System.err.println("makefile not found");
-            //help();
+        //only detect nodes
+        if(cmd.hasOption("d")){
+            moteList.readFile();
             return;
         }
-        System.out.println("Makefile " + makefile.getPath() + " found");
-
-        List<String> argsList = Arrays.asList(args);
-
-        if (argsList.contains("-m")) {
-            UploadThread t1 = new UploadThread(projectPath);
-            t1.select(0);
-            t1.run();
-
-        } else if (argsList.contains("-c")) {
-            UploadThread t1 = new UploadThread(projectPath);
-            t1.select(2);
-            t1.run();
-
-        } else if (argsList.contains("-u")) {
-            for (String motePath : moteList.getMotes()) {
-                UploadThread t1 = new UploadThread(projectPath, motePath);
-                t1.select(1);
-                t1.run();
-            }
-
-        } else if (argsList.contains("-t")) {
-            UploadThread t0 = new UploadThread(projectPath);
-            t0.select(0);
-            t0.run();
-            
-            for (String motePath : moteList.getMotes()) {
-                UploadThread t1 = new UploadThread(projectPath, motePath);
-                t1.select(1);
-                //if specified, create new thread for every 
-                new Thread(t1).start();
-            }
+        
+        //if make
+        if(cmd.hasOption("m") || cmd.hasOption("c") || cmd.hasOption("u")){
+            UploadMain upload = new UploadMain(moteList, cmd);
+            upload.runMake();
         }
-               
         
         
                

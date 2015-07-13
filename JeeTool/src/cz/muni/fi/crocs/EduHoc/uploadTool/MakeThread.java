@@ -13,29 +13,29 @@ import java.util.logging.Logger;
  *
  * @author LukeMcNemee
  */
-public class UploadThread implements Runnable {
+public class MakeThread implements Runnable {
 
     private String projectPath;
     private int mode = 0;
     private String mote;
-    
+
     private boolean silent = false;
     private boolean verbose = false;
-    
-    public void setVerbose(){
+
+    public void setVerbose() {
         verbose = true;
     }
-    
-    public void setSilent(){
+
+    public void setSilent() {
         silent = true;
     }
-    
-    public UploadThread(String projectPath, String mote) {
+
+    public MakeThread(String projectPath, String mote) {
         this.projectPath = projectPath;
         this.mote = mote;
     }
 
-    public UploadThread(String projectPath) {
+    public MakeThread(String projectPath) {
         this.projectPath = projectPath;
         this.mote = "";
     }
@@ -55,24 +55,41 @@ public class UploadThread implements Runnable {
         try {
             ExecuteShellCommand com = new ExecuteShellCommand();
             FileWriter writer = new FileWriter();
+            if (silent) {
+                com.setSilent();
+                writer.setSilent();
+            }
+            if (verbose) {
+                com.setVerbose();
+                writer.setVerbose();
+            }
+
             writer.appendToFile("#./bin/bash");
             writer.appendToFile("cd " + projectPath);
             switch (mode) {
                 case 0:
                     writer.appendToFile("make");
-                    System.out.println("Calling make on target " + projectPath);
+                    if (verbose) {
+                        System.out.println("Calling make on target " + projectPath);
+                    }
                     break;
                 case 1:
-                    writer.appendToFile("make upload MONITOR_PORT="+mote);
-                    System.out.println("Calling make upload on target " + projectPath);
+                    writer.appendToFile("make upload MONITOR_PORT=" + mote);
+                    if (verbose) {
+                        System.out.println("Calling make upload on target " + projectPath);
+                    }
                     break;
                 case 2:
                     writer.appendToFile("make clean");
-                    System.out.println("Calling make clean on target " + projectPath);
+                    if (verbose) {
+                        System.out.println("Calling make clean on target " + projectPath);
+                    }
                     break;
                 default:
                     writer.appendToFile("make");
-                    System.out.println("Calling make on target " + projectPath);
+                    if (verbose) {
+                        System.out.println("Calling make on target " + projectPath);
+                    }
                     break;
             }
 
@@ -80,9 +97,13 @@ public class UploadThread implements Runnable {
             writer.close();
             com.executeCommand("chmod a+x " + writer.getFilename());
             com.executeCommand("./" + writer.getFilename());
-            com.executeCommand("echo \"shell finished\"");
+            if (verbose) {
+                com.executeCommand("echo \"shell finished\"");
+            }
         } catch (IOException ex) {
-            Logger.getLogger(UploadThread.class.getName()).log(Level.SEVERE, null, ex);
+            if (!silent) {
+                System.err.println("Make thread failed" + ex.toString());
+            }
         }
     }
 

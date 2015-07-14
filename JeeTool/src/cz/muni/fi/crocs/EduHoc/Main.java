@@ -102,13 +102,19 @@ public class Main {
 
                 com.executeCommand(cmd.getOptionValue("E"));
             } catch (IOException ex) {
-                System.err.println("Execute command "+ cmd.getOptionValue("E") +" failed");
+                System.err.println("Execute command " + cmd.getOptionValue("E") + " failed");
             }
         }
-        
+
         //if serial
-        if(cmd.hasOption("l") || cmd.hasOption("w")){
-            SerialMain serial = new SerialMain();
+        if (cmd.hasOption("l") || cmd.hasOption("w")) {
+            SerialMain serial = new SerialMain(cmd, moteList);
+            if (silent) {
+                serial.setSilent();
+            }
+            if (verbose) {
+                serial.setVerbose();
+            }
         }
 
     }

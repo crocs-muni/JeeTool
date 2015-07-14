@@ -44,7 +44,9 @@ public class OptionsMain {
         Option write = new Option("w", "write", true, "write to serial now or after upload, directory must contain at least one file with same name as node");
         
         Option execute = new Option("E", "execute", true, "path to shell script to be executed in phase 3");
-        
+        Option time = new Option("T", "time", true, "countdown in minutes for serial phase, default is 15 minutes, after this time, serial connection closes");
+        time.setType(int.class);
+
         Options options = new Options();
 
         options.addOption(help);
@@ -59,6 +61,7 @@ public class OptionsMain {
         options.addOption(write);
         
         options.addOption(execute);
+        options.addOption(time);
 
         return options;
     }

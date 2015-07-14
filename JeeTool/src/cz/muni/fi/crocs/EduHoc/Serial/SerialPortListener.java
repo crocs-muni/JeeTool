@@ -5,52 +5,62 @@
  */
 package cz.muni.fi.crocs.EduHoc.Serial;
 
+import cz.muni.fi.crocs.EduHoc.Main;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
  * @author LukeMcNemee
  */
-public class SerialPortListener implements Runnable{
+public class SerialPortListener implements Runnable {
 
-    private SerialPortHandler handler;
     private InputStream is;
     private File file;
+    private int time;
 
     private boolean silent = false;
     private boolean verbose = false;
-    
-    public void setVerbose(){
+
+    public void setVerbose() {
         verbose = true;
     }
-    
-    public void setSilent(){
+
+    public void setSilent() {
         silent = true;
     }
-    
-    public SerialPortListener(SerialPortHandler handler, File file) {
-        this.handler = handler;
+
+    public SerialPortListener(InputStream is, File file, int time) {
+        this.is = is;
         this.file = file;
-        
-        this.is = handler.getSerialInputStream();
+        this.time = time;
     }
 
-
-    public void streamToFile() throws  IOException {
+    public void streamToFile() throws IOException {
         OutputStream os = new FileOutputStream(file);
 
         byte[] buffer = new byte[8 * 1024];
         int bytesRead;
-        while ((bytesRead = is.read(buffer)) != -1) {
+        Long startTime = System.nanoTime();
+        int elapsed = 0;
+        while ((bytesRead = is.read(buffer)) != -1 && elapsed <= time) {
             os.write(buffer, 0, bytesRead);
+            if (verbose) {
+                System.out.println("To file " + file.getAbsolutePath() + " written :" + Main.ANSI_CYAN + bytesRead + Main.ANSI_RESET);
+            }
             os.flush();
+            Long timeDelta = System.nanoTime() - startTime;
+            elapsed = (int) TimeUnit.NANOSECONDS.toMinutes(timeDelta);
         }
         is.close();
-        os.close();        
+        os.close();
+        if (!silent) {
+            System.out.println("Stream to file " + file.getAbsolutePath() + " closed");
+        }
     }
 
     @Override

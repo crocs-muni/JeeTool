@@ -7,6 +7,7 @@ package cz.muni.fi.crocs.EduHoc;
 
 import cz.muni.fi.crocs.EduHoc.Serial.SerialPortHandler;
 import cz.muni.fi.crocs.EduHoc.Serial.SerialPortListener;
+import cz.muni.fi.crocs.EduHoc.Serial.SerialPortWriter;
 import cz.muni.fi.crocs.EduHoc.uploadTool.MoteList;
 import java.io.File;
 import java.io.IOException;
@@ -47,9 +48,21 @@ public class SerialMain {
             }
 
             if (cmd.hasOption("w")) {
-                File file = new File(cmd.getOptionValue("w"), mote.substring(mote.lastIndexOf("/")));
-                if (file.exists()) {
+                String prefix = cmd.getOptionValue("w");
+                if (prefix.charAt(prefix.length() - 1) == '/') {
+                    prefix = prefix.substring(0, prefix.length() - 1);
+                }
 
+                File file = new File(prefix, mote.substring(mote.lastIndexOf("/")));
+                if (file.exists()) {
+                    SerialPortWriter writer = new SerialPortWriter(file, handler.getSerialOutputStream());
+                    if (verbose) {
+                        writer.setVerbose();
+                    }
+                    if (silent) {
+                        writer.setSilent();
+                    }
+                    new Thread(writer).start();                    
                 }
             }
 

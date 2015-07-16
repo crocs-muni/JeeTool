@@ -115,6 +115,7 @@ public class Main {
             if (verbose) {
                 serial.setVerbose();
             }
+            serial.startSerial();            
         }
 
     }

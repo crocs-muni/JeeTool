@@ -11,6 +11,11 @@ import cz.muni.fi.crocs.EduHoc.Serial.SerialPortWriter;
 import cz.muni.fi.crocs.EduHoc.uploadTool.MoteList;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.cli.CommandLine;
 
 /**
@@ -35,6 +40,7 @@ public class SerialMain {
     }
 
     public void startSerial() {
+        List<Thread> threads = new ArrayList<Thread>();
         for (String mote : motelist.getMotes()) {
             SerialPortHandler handler = null;
             try {
@@ -59,9 +65,11 @@ public class SerialMain {
                 if (silent) {
                     listener.setSilent();
                 }
-                new Thread(listener).start();
+                Thread t = new Thread(listener);
+                t.start();
+                threads.add(t);
             }
-            
+
             if (cmd.hasOption("w")) {
                 String prefix = cmd.getOptionValue("w");
                 if (prefix.charAt(prefix.length() - 1) == '/') {
@@ -77,11 +85,24 @@ public class SerialMain {
                     if (silent) {
                         writer.setSilent();
                     }
-                    new Thread(writer).start();                    
+                    Thread t = new Thread(writer);
+                    t.start();
+                    threads.add(t);
                 }
             }
 
-            
+        }
+        try {
+            if (cmd.hasOption("T")) {
+                Thread.sleep(TimeUnit.NANOSECONDS.toMinutes(Integer.parseInt(cmd.getOptionValue("T"))));
+            } else {
+                Thread.sleep(TimeUnit.NANOSECONDS.toMinutes(15));
+            }
+        } catch (InterruptedException ex) {
+            Logger.getLogger(SerialMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        for (Thread t : threads) {
+            t.interrupt();
         }
     }
 

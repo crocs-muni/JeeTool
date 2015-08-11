@@ -47,6 +47,21 @@ public class SerialMain {
                 continue;
             }
 
+            if (cmd.hasOption("l")) {
+                //create file for each node
+                File file = new File(cmd.getOptionValue("l"), mote.substring(mote.lastIndexOf("/")));
+
+                SerialPortListener listener = new SerialPortListener(handler.getSerialInputStream(), file, time);
+                if (verbose) {
+                    listener.setVerbose();
+                    System.out.println("File " + file.getAbsolutePath() + " created");
+                }
+                if (silent) {
+                    listener.setSilent();
+                }
+                new Thread(listener).start();
+            }
+            
             if (cmd.hasOption("w")) {
                 String prefix = cmd.getOptionValue("w");
                 if (prefix.charAt(prefix.length() - 1) == '/') {
@@ -66,20 +81,7 @@ public class SerialMain {
                 }
             }
 
-            if (cmd.hasOption("l")) {
-                //create file for each node
-                File file = new File(cmd.getOptionValue("l"), mote.substring(mote.lastIndexOf("/")));
-
-                SerialPortListener listener = new SerialPortListener(handler.getSerialInputStream(), file, time);
-                if (verbose) {
-                    listener.setVerbose();
-                    System.out.println("File " + file.getAbsolutePath() + " created");
-                }
-                if (silent) {
-                    listener.setSilent();
-                }
-                new Thread(listener).start();
-            }
+            
         }
     }
 

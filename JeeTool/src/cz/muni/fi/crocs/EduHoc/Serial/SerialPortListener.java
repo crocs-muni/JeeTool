@@ -50,7 +50,7 @@ public class SerialPortListener implements Runnable {
         while ((bytesRead = is.read(buffer)) != -1 && elapsed <= time) {
             os.write(buffer, 0, bytesRead);
             if (verbose) {
-                System.out.println("To file " + file.getAbsolutePath() + " written :" + Main.ANSI_CYAN + bytesRead + Main.ANSI_RESET);
+                System.out.println("To file " + file.getAbsolutePath() + " written :" + Main.ANSI_CYAN + buffer + Main.ANSI_RESET);
             }
             os.flush();
             Long timeDelta = System.nanoTime() - startTime;

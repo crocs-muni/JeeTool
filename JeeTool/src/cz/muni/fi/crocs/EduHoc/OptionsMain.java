@@ -59,6 +59,7 @@ public class OptionsMain {
 
         options.addOption(threads);
         options.addOption(write);
+        options.addOption(listen);
         
         options.addOption(execute);
         options.addOption(time);

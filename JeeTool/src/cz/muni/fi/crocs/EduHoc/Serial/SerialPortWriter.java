@@ -12,6 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -39,6 +41,11 @@ public class SerialPortWriter implements Runnable {
 
     @Override
     public void run() {
+        try {
+            Thread.sleep(60000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(SerialPortWriter.class.getName()).log(Level.SEVERE, null, ex);
+        }
         try {
             BufferedReader br = new BufferedReader(new FileReader(filePath));
             String line = br.readLine();

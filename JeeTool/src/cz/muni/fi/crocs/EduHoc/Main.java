@@ -80,9 +80,11 @@ public class Main {
             System.out.println("reading motelist from file " + filepath);
         }
 
-        //only detect nodes
+        
+        moteList.readFile();
+        
         if (cmd.hasOption("d")) {
-            moteList.readFile();
+            //only detect nodes
             return;
         }
 

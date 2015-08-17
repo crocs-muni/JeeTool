@@ -12,6 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -48,16 +50,18 @@ public class SerialPortWriter implements Runnable {
         }
         try {
             BufferedReader br = new BufferedReader(new FileReader(filePath));
-            String line = br.readLine();
+            String line = "1 10 5\n";
+            PrintStream printStream = new PrintStream(outStream);
 
-            while (line != null) {
-                if (verbose) {
+            //while (line != null) {
+                //if (verbose) {
                     System.out.println("To serial from file " + filePath + " " + Main.ANSI_CYAN + line + Main.ANSI_RESET);
-                }
-                outStream.write(line.getBytes());
-                outStream.flush();
-                line = br.readLine();
-            }
+                //}
+                printStream.print(line);
+                printStream.flush();
+                //line = br.readLine();
+            //}
+            printStream.close();
 
         } catch (FileNotFoundException ex) {
             if (!silent) {

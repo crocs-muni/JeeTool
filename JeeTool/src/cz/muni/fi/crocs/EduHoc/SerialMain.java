@@ -71,6 +71,11 @@ public class SerialMain {
             }
 
             if (cmd.hasOption("w")) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(SerialMain.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 String prefix = cmd.getOptionValue("w");
                 if (prefix.charAt(prefix.length() - 1) == '/') {
                     prefix = prefix.substring(0, prefix.length() - 1);
@@ -78,6 +83,7 @@ public class SerialMain {
 
                 File file = new File(prefix, mote.substring(mote.lastIndexOf("/")));
                 if (file.exists()) {
+                    System.out.println("file "+ file.getAbsolutePath() + " found, starting write");
                     SerialPortWriter writer = new SerialPortWriter(file, handler.getSerialOutputStream());
                     if (verbose) {
                         writer.setVerbose();
@@ -94,15 +100,21 @@ public class SerialMain {
         }
         try {
             if (cmd.hasOption("T")) {
-                Thread.sleep(TimeUnit.NANOSECONDS.toMinutes(Integer.parseInt(cmd.getOptionValue("T"))));
+                
+                Thread.sleep(TimeUnit.MILLISECONDS.toMinutes(Integer.parseInt(cmd.getOptionValue("T"))));
             } else {
-                Thread.sleep(TimeUnit.NANOSECONDS.toMinutes(15));
+                Thread.sleep(TimeUnit.MILLISECONDS.toMinutes(15));
             }
         } catch (InterruptedException ex) {
             Logger.getLogger(SerialMain.class.getName()).log(Level.SEVERE, null, ex);
         }
         for (Thread t : threads) {
-            t.interrupt();
+            try {
+                t.join();
+                t.interrupt();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(SerialMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 

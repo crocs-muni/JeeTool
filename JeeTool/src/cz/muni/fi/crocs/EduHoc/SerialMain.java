@@ -42,12 +42,12 @@ public class SerialMain {
     public void startSerial() {
         List<Thread> threads = new ArrayList<Thread>();
         List<SerialPortHandler> handlers = new ArrayList<SerialPortHandler>();
-        for (String mote : motelist.getMotes().values()) {
+        for (String mote : motelist.getMotes().keySet()) {
             SerialPortHandler handler = null;
             try {
                 //open serial port and connect to it
                 handler = new SerialPortHandler();
-                handler.connect(mote);
+                handler.connect(motelist.getMotes().get(mote));
                 handlers.add(handler);
 
             } catch (IOException ex) {
@@ -73,11 +73,7 @@ public class SerialMain {
             }
 
             if (cmd.hasOption("w")) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(SerialMain.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                
                 String prefix = cmd.getOptionValue("w");
                 if (prefix.charAt(prefix.length() - 1) == '/') {
                     prefix = prefix.substring(0, prefix.length() - 1);

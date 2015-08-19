@@ -6,8 +6,6 @@
 package cz.muni.fi.crocs.EduHoc.uploadTool;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

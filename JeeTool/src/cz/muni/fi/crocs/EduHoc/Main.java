@@ -6,11 +6,7 @@
 package cz.muni.fi.crocs.EduHoc;
 
 import cz.muni.fi.crocs.EduHoc.uploadTool.*;
-import cz.muni.fi.crocs.EduHoc.Serial.*;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;

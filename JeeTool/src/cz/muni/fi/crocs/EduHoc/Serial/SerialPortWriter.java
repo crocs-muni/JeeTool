@@ -10,10 +10,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -67,10 +65,6 @@ public class SerialPortWriter implements Runnable {
             if (!silent) {
                 System.err.println("File not found " + ex.toString());
             }
-        } catch (IOException ex) {
-            if (!silent) {
-                System.err.println("Port write failed " + ex.toString());
-            }
-        }
+        } 
     }
 }

@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,6 +25,15 @@ public class MoteList {
     private Map<String, String> motes;
     private boolean silent = false;
     private boolean verbose = false;
+    private List<Integer> ids;
+
+    public List<Integer> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<Integer> ids) {
+        this.ids = ids;
+    }
 
     public void setVerbose() {
         verbose = true;
@@ -53,14 +63,33 @@ public class MoteList {
 
                     File mote = new File(line);
                     if (mote.exists()) {
-                        if (!silent) {
-                            System.out.println(Main.ANSI_GREEN + "mote " + line + " found" + Main.ANSI_RESET);
-                        }
-                        motes.put(line, mote.getCanonicalPath());
+                        if (ids != null) {
+                            int id = Integer.parseInt(line.replaceAll("[\\D]", ""));
+                            if (ids.contains(id)) {
+                                if (!silent) {
+                                    System.out.println(Main.ANSI_GREEN + "mote " + line + " found" + Main.ANSI_RESET);
+                                }
+                                motes.put(line, mote.getCanonicalPath());
+                            }
+                        } else {
 
+                            if (!silent) {
+                                System.out.println(Main.ANSI_GREEN + "mote " + line + " found" + Main.ANSI_RESET);
+                            }
+                            motes.put(line, mote.getCanonicalPath());
+                        }
                     } else {
-                        if (verbose) {
-                            System.out.println(Main.ANSI_RED + "mote " + line + " not found" + Main.ANSI_RESET);
+                        if (ids != null) {
+                            int id = Integer.parseInt(line.replaceAll("[\\D]", ""));
+                            if (ids.contains(id)) {
+                                if (verbose) {
+                                    System.out.println(Main.ANSI_RED + "mote " + line + " not found" + Main.ANSI_RESET);
+                                }
+                            }
+                        } else {
+                            if (verbose) {
+                                System.out.println(Main.ANSI_RED + "mote " + line + " not found" + Main.ANSI_RESET);
+                            }
                         }
                     }
                 }

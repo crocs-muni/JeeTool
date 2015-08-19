@@ -7,6 +7,8 @@ package cz.muni.fi.crocs.EduHoc;
 
 import cz.muni.fi.crocs.EduHoc.uploadTool.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -76,6 +78,25 @@ public class Main {
             System.out.println("reading motelist from file " + filepath);
         }
 
+        
+        if(cmd.hasOption("i")){
+            List<Integer> ids = new ArrayList<Integer>();
+            String arg = cmd.getOptionValue("i");
+            String [] IdArgs = arg.split(",");
+            for(String s : IdArgs){
+                if(s.contains("-")){
+                    int start = Integer.parseInt(s.substring(0, s.indexOf("-")));
+                    int end = Integer.parseInt(s.substring(s.indexOf("-")+1, s.length()));
+                    for(int i = start; i <= end; i++){
+                        ids.add(i);
+                    }
+                } else {
+                    ids.add(Integer.parseInt(s));
+                }
+            }
+            moteList.setIds(ids);
+        }
+        
         
         moteList.readFile();
         

@@ -6,6 +6,7 @@
 package cz.muni.fi.crocs.EduHoc.Serial;
 
 import gnu.io.*;
+import java.io.File;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,8 +39,10 @@ public class SerialPortHandler {
     public void connect(String portName) throws IOException {
         try {
             // Obtain a CommPortIdentifier object for the port you want to open
-            System.setProperty("gnu.io.rxtx.SerialPorts", portName);
-            CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(portName);
+            File f = new File(portName);
+            
+            System.setProperty("gnu.io.rxtx.SerialPorts", f.getCanonicalPath());
+            CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(f.getCanonicalPath());
 
             // Get the port's ownership
             serialPort = (SerialPort) portId.open("JeeTool", 5000);

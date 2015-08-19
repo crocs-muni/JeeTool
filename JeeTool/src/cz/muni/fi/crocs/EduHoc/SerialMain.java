@@ -104,12 +104,12 @@ public class SerialMain {
 
             if (cmd.hasOption("T")) {
                 if (verbose) {
-                    System.out.println("Going to sleep for " + cmd.getOptionValue("T") + "minutes");
+                    System.out.println("Going to sleep for " + cmd.getOptionValue("T") + " minutes");
                 }
                 Thread.sleep(TimeUnit.MINUTES.toMillis(Integer.parseInt(cmd.getOptionValue("T"))));
             } else {
                 if (verbose) {
-                    System.out.println("Going to sleep for " + 15 + "minutes");
+                    System.out.println("Going to sleep for " + 15 + " minutes");
                 }
                 Thread.sleep(TimeUnit.MINUTES.toMillis(15));
             }
@@ -122,7 +122,7 @@ public class SerialMain {
         }
         for (Thread t : threads) {
             try {
-                t.join();
+                t.join(1);
                 t.interrupt();
             } catch (InterruptedException ex) {
                 Logger.getLogger(SerialMain.class.getName()).log(Level.SEVERE, null, ex);
@@ -135,7 +135,8 @@ public class SerialMain {
         for (SerialPortHandler h : handlers) {
             h.closePort();
         }
-
+        System.out.println("All closed");
+        System.exit(0);
     }
 
     public void setVerbose() {

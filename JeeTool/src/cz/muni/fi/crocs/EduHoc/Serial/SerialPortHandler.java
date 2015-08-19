@@ -10,6 +10,8 @@ import gnu.io.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -24,18 +26,19 @@ public class SerialPortHandler {
 
     private boolean silent = false;
     private boolean verbose = false;
-    
-    public void setVerbose(){
+
+    public void setVerbose() {
         verbose = true;
     }
-    
-    public void setSilent(){
+
+    public void setSilent() {
         silent = true;
     }
-    
+
     public void connect(String portName) throws IOException {
         try {
             // Obtain a CommPortIdentifier object for the port you want to open
+            System.setProperty("gnu.io.rxtx.SerialPorts", portName);
             CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(portName);
 
             // Get the port's ownership
@@ -58,10 +61,24 @@ public class SerialPortHandler {
         }
     }
 
-    public void closePort(){
-        serialPort.close();
-    }
+    public void closePort() {
+        System.out.println("Closing serial port");
+
+        new Thread(){
+        @Override
+        public void run(){
+            try{
+            inStream.close();
+            outStream.close();
+            serialPort.close();
+            }catch (IOException ex) {}
+        }
+        }.start();
     
+        System.out.println("Closed serial port");
+
+    }
+
     /**
      * Get the serial port input stream
      *

@@ -42,7 +42,7 @@ public class SerialMain {
     public void startSerial() {
         List<Thread> threads = new ArrayList<Thread>();
         List<SerialPortHandler> handlers = new ArrayList<SerialPortHandler>();
-        for (String mote : motelist.getMotes()) {
+        for (String mote : motelist.getMotes().values()) {
             SerialPortHandler handler = null;
             try {
                 //open serial port and connect to it

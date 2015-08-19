@@ -11,8 +11,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -21,7 +21,7 @@ import java.util.List;
 public class MoteList {
 
     private String filepath;
-    private List<String> motes;
+    private Map<String, String> motes;
     private boolean silent = false;
     private boolean verbose = false;
 
@@ -35,14 +35,13 @@ public class MoteList {
 
     public MoteList(String filepath) {
         this.filepath = filepath;
-        motes = new ArrayList<String>();
+        motes = new HashMap<String, String>();
 
     }
 
     /**
-     * read file line by line and test, if file exists. 
-     * All existing files are saved as found motes, 
-     * lines begining with # are treated as comments
+     * read file line by line and test, if file exists. All existing files are
+     * saved as found motes, lines begining with # are treated as comments
      */
     public void readFile() {
         try {
@@ -52,12 +51,12 @@ public class MoteList {
 
                 if (line.charAt(0) != '#') {
 
-                    File mote = new File(line);                    
+                    File mote = new File(line);
                     if (mote.exists()) {
                         if (!silent) {
                             System.out.println(Main.ANSI_GREEN + "mote " + line + " found" + Main.ANSI_RESET);
                         }
-                        motes.add(mote.getCanonicalPath());
+                        motes.put(line, mote.getCanonicalPath());
 
                     } else {
                         if (verbose) {
@@ -67,8 +66,7 @@ public class MoteList {
                 }
                 line = reader.readLine();
             }
-            
-            
+
             if (motes.size() == 1) {
                 System.out.println(motes.size() + " mote available");
             } else {
@@ -82,7 +80,7 @@ public class MoteList {
         }
     }
 
-    public List<String> getMotes() {
+    public Map<String, String> getMotes() {
         return motes;
     }
 }

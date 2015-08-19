@@ -100,7 +100,7 @@ public class UploadMain {
 
         } else if (cmd.hasOption("u") && (!cmd.hasOption("t"))) {
             //System.out.println("running make upload");
-            for (String motePath : motelist.getMotes()) {
+            for (String motePath : motelist.getMotes().keySet()) {
                 MakeThread t1 = new MakeThread(projectPath, motePath);
                 if (silent) {
                     t1.setSilent();
@@ -125,7 +125,7 @@ public class UploadMain {
             t0.run();
             
             //System.out.println("motes:" + motelist.getMotes().toString());
-            for (String motePath : motelist.getMotes()) {
+            for (String motePath : motelist.getMotes().keySet()) {
                 MakeThread t1 = new MakeThread(projectPath, motePath);
                 if (silent) {
                     t1.setSilent();

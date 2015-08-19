@@ -39,10 +39,8 @@ public class SerialPortHandler {
     public void connect(String portName) throws IOException {
         try {
             // Obtain a CommPortIdentifier object for the port you want to open
-            File f = new File(portName);
             
-            System.setProperty("gnu.io.rxtx.SerialPorts", f.getCanonicalPath());
-            CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(f.getCanonicalPath());
+            CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(portName);
 
             // Get the port's ownership
             serialPort = (SerialPort) portId.open("JeeTool", 5000);

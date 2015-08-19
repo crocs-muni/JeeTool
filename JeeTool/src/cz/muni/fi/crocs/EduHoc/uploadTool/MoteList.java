@@ -52,13 +52,12 @@ public class MoteList {
 
                 if (line.charAt(0) != '#') {
 
-                    File mote = new File(line);
-
+                    File mote = new File(line);                    
                     if (mote.exists()) {
                         if (!silent) {
                             System.out.println(Main.ANSI_GREEN + "mote " + line + " found" + Main.ANSI_RESET);
                         }
-                        motes.add(line);
+                        motes.add(mote.getCanonicalPath());
 
                     } else {
                         if (verbose) {

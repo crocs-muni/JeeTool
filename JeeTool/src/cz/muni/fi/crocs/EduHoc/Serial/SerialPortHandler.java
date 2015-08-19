@@ -58,6 +58,10 @@ public class SerialPortHandler {
         }
     }
 
+    public void closePort(){
+        serialPort.close();
+    }
+    
     /**
      * Get the serial port input stream
      *

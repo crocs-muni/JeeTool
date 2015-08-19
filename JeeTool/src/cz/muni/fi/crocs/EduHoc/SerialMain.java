@@ -41,12 +41,14 @@ public class SerialMain {
 
     public void startSerial() {
         List<Thread> threads = new ArrayList<Thread>();
+        List<SerialPortHandler> handlers = new ArrayList<SerialPortHandler>();
         for (String mote : motelist.getMotes()) {
             SerialPortHandler handler = null;
             try {
                 //open serial port and connect to it
                 handler = new SerialPortHandler();
                 handler.connect(mote);
+                handlers.add(handler);
 
             } catch (IOException ex) {
                 System.err.println("port connection to " + mote + " failed");
@@ -83,7 +85,7 @@ public class SerialMain {
 
                 File file = new File(prefix, mote.substring(mote.lastIndexOf("/")));
                 if (file.exists()) {
-                    System.out.println("file "+ file.getAbsolutePath() + " found, starting write");
+                    System.out.println("file " + file.getAbsolutePath() + " found, starting write");
                     SerialPortWriter writer = new SerialPortWriter(file, handler.getSerialOutputStream());
                     if (verbose) {
                         writer.setVerbose();
@@ -99,14 +101,24 @@ public class SerialMain {
 
         }
         try {
+
             if (cmd.hasOption("T")) {
-                
-                Thread.sleep(TimeUnit.MILLISECONDS.toMinutes(Integer.parseInt(cmd.getOptionValue("T"))));
+                if (verbose) {
+                    System.out.println("Going to sleep for " + cmd.getOptionValue("T") + "minutes");
+                }
+                Thread.sleep(TimeUnit.MINUTES.toMillis(Integer.parseInt(cmd.getOptionValue("T"))));
             } else {
-                Thread.sleep(TimeUnit.MILLISECONDS.toMinutes(15));
+                if (verbose) {
+                    System.out.println("Going to sleep for " + 15 + "minutes");
+                }
+                Thread.sleep(TimeUnit.MINUTES.toMillis(15));
             }
+
         } catch (InterruptedException ex) {
             Logger.getLogger(SerialMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (verbose) {
+            System.out.println("Going to end " + threads.size() + " threads");
         }
         for (Thread t : threads) {
             try {
@@ -116,6 +128,14 @@ public class SerialMain {
                 Logger.getLogger(SerialMain.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        if (verbose) {
+            System.out.println("Going to close " + handlers.size() + " ports");
+        }
+
+        for (SerialPortHandler h : handlers) {
+            h.closePort();
+        }
+
     }
 
     public void setVerbose() {

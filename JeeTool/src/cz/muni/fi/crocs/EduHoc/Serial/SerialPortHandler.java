@@ -1,29 +1,40 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 CRoCS
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 package cz.muni.fi.crocs.EduHoc.Serial;
 
-import gnu.io.*;
-
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import jssc.SerialPort;
+import jssc.SerialPortException;
 
-/**
- *
- * @author Embedded Freaks
- * https://embeddedfreak.wordpress.com/2008/08/08/how-to-open-serial-port-using-rxtx/
- */
 public class SerialPortHandler {
 
-    private SerialPort serialPort;
-    private OutputStream outStream;
-    private InputStream inStream;
+    SerialPort port;
 
     private boolean silent = false;
     private boolean verbose = false;
+    protected SerialPortListener listener;
 
     public void setVerbose() {
         verbose = true;
@@ -34,65 +45,54 @@ public class SerialPortHandler {
     }
 
     public void connect(String portName) throws IOException {
+        port = new SerialPort(portName);
         try {
-            // Obtain a CommPortIdentifier object for the port you want to open
-            
-            CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(portName);
-
-            // Get the port's ownership
-            serialPort = (SerialPort) portId.open("JeeTool", 5000);
-
-            // Set the parameters of the connection.
+            port.openPort();
             setSerialPortParameters();
-
-            // Open the input and output streams for the connection. If they won't
-            // open, close the port before throwing an exception.
-            outStream = serialPort.getOutputStream();
-            inStream = serialPort.getInputStream();
-        } catch (NoSuchPortException e) {
-            throw new IOException(e.getMessage());
-        } catch (PortInUseException e) {
-            throw new IOException(e.getMessage());
-        } catch (IOException e) {
-            serialPort.close();
-            throw e;
+        } catch (SerialPortException ex) {
+            //TODO print
         }
+
+    }
+
+    public void listen(File file) {
+        try {
+
+            //add listener
+            listener = new SerialPortListener(port, file);
+            if (verbose) {
+                listener.setVerbose();
+            }
+            if (silent) {
+                listener.setSilent();
+            }
+            port.addEventListener(listener);
+
+        } catch (SerialPortException ex) {
+
+        } catch (IOException ex) {
+
+        }
+    }
+
+    public void write(File file) {
+        SerialPortWriter writer = new SerialPortWriter(port, file);
+        if (verbose) {
+                writer.setVerbose();
+            }
+            if (silent) {
+                writer.setSilent();
+            }
+        new Thread(writer).start();
     }
 
     public void closePort() {
-        System.out.println("Closing serial port");
-
-        new Thread(){
-        @Override
-        public void run(){
-            try{
-            inStream.close();
-            outStream.close();
-            serialPort.close();
-            }catch (IOException ex) {}
+        try {
+            listener.close();
+            port.closePort();
+        } catch (SerialPortException ex) {
+            //TODO print
         }
-        }.start();
-    
-        System.out.println("Closed serial port");
-
-    }
-
-    /**
-     * Get the serial port input stream
-     *
-     * @return The serial port input stream
-     */
-    public InputStream getSerialInputStream() {
-        return inStream;
-    }
-
-    /**
-     * Get the serial port output stream
-     *
-     * @return The serial port output stream
-     */
-    public OutputStream getSerialOutputStream() {
-        return outStream;
     }
 
     /**
@@ -101,14 +101,11 @@ public class SerialPortHandler {
     private void setSerialPortParameters() throws IOException {
         CppDefineParser cpp = new CppDefineParser(System.getenv("EDU_HOC_HOME") + "/src/common.h");
         int baudRate = Integer.parseInt(cpp.findDefine("SERIAL_FREQUENCY"));
-
         try {
-            // Set serial port to 57600bps-8N1..my favourite
-            serialPort.setSerialPortParams(baudRate, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-            serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_NONE);
-
-        } catch (UnsupportedCommOperationException ex) {
-            throw new IOException("Unsupported serial port parameter");
+            port.setParams(baudRate, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+        } catch (SerialPortException ex) {
+            // TODO print
         }
     }
+
 }

@@ -1,21 +1,35 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 CRoCS
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 package cz.muni.fi.crocs.EduHoc;
 
 import cz.muni.fi.crocs.EduHoc.Serial.SerialPortHandler;
-import cz.muni.fi.crocs.EduHoc.Serial.SerialPortListener;
-import cz.muni.fi.crocs.EduHoc.Serial.SerialPortWriter;
 import cz.muni.fi.crocs.EduHoc.uploadTool.MoteList;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.cli.CommandLine;
 
 /**
@@ -28,19 +42,18 @@ public class SerialMain {
     private boolean verbose = false;
     private CommandLine cmd;
     private MoteList motelist;
-    private int time;
+    private Long time;
 
     public SerialMain(CommandLine cmd, MoteList motelist) {
         this.cmd = cmd;
         this.motelist = motelist;
 
         //get value of time, if not set, use default 15
-        time = Integer.parseInt(cmd.getOptionValue("T", "15"));
+        time = TimeUnit.MINUTES.toMillis(Integer.parseInt(cmd.getOptionValue("T")));
 
     }
 
     public void startSerial() {
-        List<Thread> threads = new ArrayList<Thread>();
         List<SerialPortHandler> handlers = new ArrayList<SerialPortHandler>();
         for (String mote : motelist.getMotes().keySet()) {
             SerialPortHandler handler = null;
@@ -48,6 +61,12 @@ public class SerialMain {
                 //open serial port and connect to it
                 handler = new SerialPortHandler();
                 handler.connect(motelist.getMotes().get(mote));
+                if (verbose) {
+                    handler.setVerbose();
+                }
+                if (silent) {
+                    handler.setSilent();
+                }
                 handlers.add(handler);
 
             } catch (IOException ex) {
@@ -59,21 +78,14 @@ public class SerialMain {
                 //create file for each node
                 File file = new File(cmd.getOptionValue("l"), mote.substring(mote.lastIndexOf("/")));
 
-                SerialPortListener listener = new SerialPortListener(handler.getSerialInputStream(), file, time);
-                if (verbose) {
-                    listener.setVerbose();
+                if (verbose) {                   
                     System.out.println("File " + file.getAbsolutePath() + " created");
                 }
-                if (silent) {
-                    listener.setSilent();
-                }
-                Thread t = new Thread(listener);
-                t.start();
-                threads.add(t);
+                handler.listen(file);
             }
 
             if (cmd.hasOption("w")) {
-                
+
                 String prefix = cmd.getOptionValue("w");
                 if (prefix.charAt(prefix.length() - 1) == '/') {
                     prefix = prefix.substring(0, prefix.length() - 1);
@@ -82,19 +94,9 @@ public class SerialMain {
                 File file = new File(prefix, mote.substring(mote.lastIndexOf("/")));
                 if (file.exists()) {
                     System.out.println("file " + file.getAbsolutePath() + " found, starting write");
-                    SerialPortWriter writer = new SerialPortWriter(file, handler.getSerialOutputStream());
-                    if (verbose) {
-                        writer.setVerbose();
-                    }
-                    if (silent) {
-                        writer.setSilent();
-                    }
-                    Thread t = new Thread(writer);
-                    t.start();
-                    threads.add(t);
+                    handler.write(file);
                 }
             }
-
         }
         try {
 
@@ -111,22 +113,9 @@ public class SerialMain {
             }
 
         } catch (InterruptedException ex) {
-            Logger.getLogger(SerialMain.class.getName()).log(Level.SEVERE, null, ex);
+
         }
-        if (verbose) {
-            System.out.println("Going to end " + threads.size() + " threads");
-        }
-        for (Thread t : threads) {
-            try {
-                t.join(1);
-                t.interrupt();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(SerialMain.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        if (verbose) {
-            System.out.println("Going to close " + handlers.size() + " ports");
-        }
+        
 
         for (SerialPortHandler h : handlers) {
             h.closePort();

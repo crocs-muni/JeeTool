@@ -1,28 +1,51 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+* The MIT License (MIT)
+*
+* Copyright (c) 2015 CRoCS
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+* 
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+* 
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
+
 package cz.muni.fi.crocs.EduHoc.Serial;
 
 import cz.muni.fi.crocs.EduHoc.Main;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.concurrent.TimeUnit;
+import jssc.SerialPort;
+import jssc.SerialPortEvent;
+import jssc.SerialPortEventListener;
+import jssc.SerialPortException;
 
 /**
  *
  * @author LukeMcNemee
  */
-public class SerialPortListener implements Runnable {
+ public class SerialPortListener implements SerialPortEventListener {
 
-    private InputStream is;
+    
     private File file;
-    private int time;
-
+    private Long time;
+    private BufferedWriter bw;
+    private SerialPort port;
+    
     private boolean silent = false;
     private boolean verbose = false;
 
@@ -34,42 +57,39 @@ public class SerialPortListener implements Runnable {
         silent = true;
     }
 
-    public SerialPortListener(InputStream is, File file, int time) {
-        this.is = is;
+    public SerialPortListener(SerialPort port, File file) throws IOException {
+       
         this.file = file;
-        this.time = time;
+        bw = new BufferedWriter(new FileWriter(file));
+        
     }
 
-    public void streamToFile() throws IOException {
-        OutputStream os = new FileOutputStream(file);
-
-        byte[] buffer = new byte[8 * 1024];
-        int bytesRead;
-        Long startTime = System.nanoTime();
-        int elapsed = 0;
-        while ((bytesRead = is.read(buffer)) != -1 && elapsed <= time) {
-            os.write(buffer, 0, bytesRead);
-            if (verbose) {
-                System.out.println("To file " + file.getAbsolutePath() + " written :" + Main.ANSI_CYAN + buffer + Main.ANSI_RESET);
-            }
-            os.flush();
-            Long timeDelta = System.nanoTime() - startTime;
-            elapsed = (int) TimeUnit.NANOSECONDS.toMinutes(timeDelta);
-        }
-        is.close();
-        os.close();
-        if (!silent) {
-            System.out.println("Stream to file " + file.getAbsolutePath() + " closed");
-        }
-    }
-
-    @Override
-    public void run() {
+    public void close(){
         try {
-            streamToFile();
+            bw.close();
         } catch (IOException ex) {
-            System.err.println("Stream to file " + file.getAbsolutePath() + " failed");
+
         }
+    }
+    
+    @Override
+    public void serialEvent(SerialPortEvent serialPortEvent) {
+        try {
+            String text = port.readString();
+            if(text != null){
+                bw.write(text);
+                bw.flush();
+                 if (verbose) {
+                    System.out.println("To file from serial " + port.getPortName() + " " + Main.ANSI_CYAN + text + Main.ANSI_RESET);
+                }
+            }
+            
+        } catch (SerialPortException ex) {
+
+        } catch (IOException ex) {
+
+        }
+        
     }
 
 }

@@ -50,7 +50,7 @@ public class SerialPortHandler {
             port.openPort();
             setSerialPortParameters();
         } catch (SerialPortException ex) {
-            //TODO print
+            System.err.println(ex.toString());
         }
 
     }

@@ -58,7 +58,7 @@ import jssc.SerialPortException;
     }
 
     public SerialPortListener(SerialPort port, File file) throws IOException {
-       
+        this.port = port;
         this.file = file;
         bw = new BufferedWriter(new FileWriter(file));
         

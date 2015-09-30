@@ -94,7 +94,11 @@ public class SerialMain {
                 File file = new File(prefix, mote.substring(mote.lastIndexOf("/")));
                 if (file.exists()) {
                     System.out.println("file " + file.getAbsolutePath() + " found, starting write");
-                    handler.write(file);
+                    if(cmd.hasOption("D")){
+                        handler.write(file, Long.parseLong(cmd.getOptionValue("D")));
+                    } else {
+                        handler.write(file);
+                    }
                 }
             }
         }

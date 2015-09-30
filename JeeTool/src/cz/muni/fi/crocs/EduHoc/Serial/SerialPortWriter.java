@@ -30,6 +30,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 
@@ -43,10 +45,12 @@ public class SerialPortWriter implements Runnable {
     private boolean verbose = false;
     private File filePath;
     private SerialPort port;
-
+    private Long delay;
+    
     public SerialPortWriter( SerialPort port, File filePath) {
         this.filePath = filePath;
         this.port = port;
+        this.delay = new Long(0);
     }
 
     public void setVerbose() {
@@ -55,6 +59,10 @@ public class SerialPortWriter implements Runnable {
 
     public void setSilent() {
         silent = true;
+    }
+
+    public void setDelay(Long delay) {
+        this.delay = delay;
     }
 
     @Override
@@ -77,6 +85,7 @@ public class SerialPortWriter implements Runnable {
                     System.out.println("To serial from file " + filePath + " " + Main.ANSI_CYAN + line + Main.ANSI_RESET);
                 }
                 port.writeString(line);
+                Thread.sleep(delay);
                 line = br.readLine();
             }
             br.close();
@@ -94,6 +103,8 @@ public class SerialPortWriter implements Runnable {
             if (!silent) {
                 System.err.println("Serial port error  " + ex.toString());
             }
+        } catch (InterruptedException ex) {
+            Logger.getLogger(SerialPortWriter.class.getName()).log(Level.SEVERE, null, ex);
         } 
     }
 }

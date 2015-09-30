@@ -78,11 +78,24 @@ public class SerialPortHandler {
     public void write(File file) {
         SerialPortWriter writer = new SerialPortWriter(port, file);
         if (verbose) {
-                writer.setVerbose();
-            }
-            if (silent) {
-                writer.setSilent();
-            }
+            writer.setVerbose();
+        }
+        if (silent) {
+            writer.setSilent();
+        }
+        
+        new Thread(writer).start();
+    }
+    
+    public void write(File file, Long delay) {
+        SerialPortWriter writer = new SerialPortWriter(port, file);
+        if (verbose) {
+            writer.setVerbose();
+        }
+        if (silent) {
+            writer.setSilent();
+        }
+        writer.setDelay(delay);
         new Thread(writer).start();
     }
 

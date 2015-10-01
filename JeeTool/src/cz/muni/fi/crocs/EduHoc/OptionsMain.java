@@ -64,7 +64,7 @@ public class OptionsMain {
         
         Option execute = new Option("E", "execute", true, "path to shell script to be executed in phase 3");
         Option time = new Option("T", "time", true, "countdown in minutes for serial phase, default is 15 minutes, after this time, serial connection closes");
-        Option delay = new Option("D", "delay", true, "delay between each line send to serial, usefull for message timing");
+        Option delay = new Option("D", "delay", true, "delay in seconds between each line send to serial, usefull for message timing");
         time.setType(int.class);
 
         Options options = new Options();

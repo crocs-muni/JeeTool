@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jssc.SerialPort;
@@ -85,7 +86,7 @@ public class SerialPortWriter implements Runnable {
                     System.out.println("To serial from file " + filePath + " " + Main.ANSI_CYAN + line + Main.ANSI_RESET);
                 }
                 port.writeString(line);
-                Thread.sleep(delay);
+                Thread.sleep(TimeUnit.SECONDS.toMillis(delay));
                 line = br.readLine();
             }
             br.close();

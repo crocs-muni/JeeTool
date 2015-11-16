@@ -83,10 +83,10 @@ public class SerialPortHandler {
         if (silent) {
             writer.setSilent();
         }
-        
+
         new Thread(writer).start();
     }
-    
+
     public void write(File file, Long delay) {
         SerialPortWriter writer = new SerialPortWriter(port, file);
         if (verbose) {
@@ -101,7 +101,9 @@ public class SerialPortHandler {
 
     public void closePort() {
         try {
-            listener.close();
+            if (listener != null) {
+                listener.close();
+            }
             port.closePort();
         } catch (SerialPortException ex) {
             //TODO print

@@ -49,7 +49,7 @@ public class SerialMain {
         this.motelist = motelist;
 
         //get value of time, if not set, use default 15
-        time = TimeUnit.MINUTES.toMillis(Integer.parseInt(cmd.getOptionValue("T")));
+        time = TimeUnit.MINUTES.toMillis(Integer.parseInt(cmd.getOptionValue("T","15")));
 
     }
 

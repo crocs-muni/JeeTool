@@ -85,7 +85,11 @@ public class SerialPortWriter implements Runnable {
                 if (verbose) {
                     System.out.println("To serial from file " + filePath + " " + Main.ANSI_CYAN + line + Main.ANSI_RESET);
                 }
-                port.writeString(line);
+                if(line.length() > 25){
+                    line = line.substring(0, 25);
+                }
+                port.writeString(line+"\n");
+                
                 Thread.sleep(TimeUnit.SECONDS.toMillis(delay));
                 line = br.readLine();
             }

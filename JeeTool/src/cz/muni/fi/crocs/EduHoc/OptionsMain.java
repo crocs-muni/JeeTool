@@ -38,7 +38,7 @@ public class OptionsMain {
     public static Options createOptions() {
         Option help = new Option("h", "help", false, "show help and exit");
 
-        Option motes = new Option("a", "motes", true, "path to alternative file of motes, default setting is stored in confix/motePaths.txt");
+        Option motes = new Option("a", "motes", true, "path to alternative file of motes, default setting is stored in config/motePaths.txt");
         Option ids = new Option("i", "id", true, "select IDs of nodes from motelist, use comma separated list of IDs or ID ranges, such as 1,3,5-7,9-15");
 
         Option detect = new Option("d", "detect", false, "Perform node detection only");

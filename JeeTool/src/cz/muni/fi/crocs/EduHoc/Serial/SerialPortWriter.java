@@ -70,7 +70,7 @@ public class SerialPortWriter implements Runnable {
     public void run() {
         try {
             //wait, before node is initialized, so that no characters are missed
-            Thread.sleep(10000);
+            Thread.sleep(1000);
         } catch (InterruptedException ex) {
             if (!silent) {
                 System.err.println( ex.toString());

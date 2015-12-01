@@ -70,7 +70,7 @@ public class SerialPortWriter implements Runnable {
     public void run() {
         try {
             //wait, before node is initialized, so that no characters are missed
-            Thread.sleep(1000);
+            Thread.sleep(10000);
         } catch (InterruptedException ex) {
             if (!silent) {
                 System.err.println( ex.toString());
@@ -85,9 +85,11 @@ public class SerialPortWriter implements Runnable {
                 if (verbose) {
                     System.out.println("To serial from file " + filePath + " " + Main.ANSI_CYAN + line + Main.ANSI_RESET);
                 }
+                //BUGBUG line length should be limited by cmd parameter
                 if(line.length() > 25){
                     line = line.substring(0, 25);
                 }
+                //BUGBUG new line supported by scenarios but not by UploadApp
                 port.writeString(line+"\n");
                 
                 Thread.sleep(TimeUnit.SECONDS.toMillis(delay));

@@ -44,8 +44,8 @@ public class SerialPortWriter implements Runnable {
 
     private boolean silent = false;
     private boolean verbose = false;
-    private File filePath;
-    private SerialPort port;
+    private final File filePath;
+    private final SerialPort port;
     private Long delay;
     
     public SerialPortWriter( SerialPort port, File filePath) {
@@ -99,7 +99,6 @@ public class SerialPortWriter implements Runnable {
                 line = br.readLine();
             }
             br.close();
-            return;
 
         } catch (FileNotFoundException ex) {
             if (!silent) {

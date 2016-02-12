@@ -91,8 +91,11 @@ public class SerialPortWriter implements Runnable {
                 }
                 //BUGBUG new line supported by scenarios but not by UploadApp
                 port.writeString(line+"\n");
-                
-                Thread.sleep(TimeUnit.SECONDS.toMillis(delay));
+                int jitter = 0;
+                if(delay != 0){
+                    jitter = (int) (Math.random() * 10) - 5;
+                }
+                Thread.sleep(TimeUnit.SECONDS.toMillis(delay) + jitter);
                 line = br.readLine();
             }
             br.close();

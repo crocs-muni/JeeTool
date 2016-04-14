@@ -85,11 +85,13 @@ public class SerialPortWriter implements Runnable {
                 if (verbose) {
                     System.out.println("To serial from file " + filePath + " " + Main.ANSI_CYAN + line + Main.ANSI_RESET);
                 }
-                //BUGBUG line length should be limited by cmd parameter
-                if(line.length() > 25){
-                    line = line.substring(0, 25);
+                CppDefineParser cpp = new CppDefineParser(System.getenv("EDU_HOC_HOME") + "/src/common.h");
+                int msgLength = Integer.parseInt(cpp.findDefine("MAX_MESSAGE_LENGTH"));
+                
+                if(line.length() > msgLength){
+                    line = line.substring(0, msgLength);
                 }
-                //BUGBUG new line supported by scenarios but not by UploadApp
+
                 port.writeString(line+"\n");
                 int jitter = 0;
                 if(delay != 0){
@@ -106,7 +108,7 @@ public class SerialPortWriter implements Runnable {
             }
         } catch (IOException ex) {
             if (!silent) {
-                System.err.println("Could not read file  " + ex.toString());
+                System.err.println("Could not read file  " + ex.toString());                
             }
         } catch (SerialPortException ex) {
             if (!silent) {

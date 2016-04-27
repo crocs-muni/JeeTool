@@ -1,27 +1,26 @@
 /*
-* The MIT License (MIT)
-*
-* Copyright (c) 2015 CRoCS
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-* 
-* The above copyright notice and this permission notice shall be included in all
-* copies or substantial portions of the Software.
-* 
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-* SOFTWARE.
-*/
-
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 CRoCS
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package cz.muni.fi.crocs.EduHoc.Serial;
 
 import cz.muni.fi.crocs.EduHoc.Main;
@@ -30,6 +29,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,11 +47,21 @@ public class SerialPortWriter implements Runnable {
     private final File filePath;
     private final SerialPort port;
     private Long delay;
-    
-    public SerialPortWriter( SerialPort port, File filePath) {
+    private int seed;
+    private Generator g;
+
+    public SerialPortWriter(SerialPort port, File filePath, Generator g) {
         this.filePath = filePath;
         this.port = port;
         this.delay = new Long(0);
+        this.g = g;
+        
+        
+    }
+
+
+    public int getSeed() {
+        return seed;
     }
 
     public void setVerbose() {
@@ -73,13 +83,12 @@ public class SerialPortWriter implements Runnable {
             Thread.sleep(10000);
         } catch (InterruptedException ex) {
             if (!silent) {
-                System.err.println( ex.toString());
+                System.err.println(ex.toString());
             }
         }
         try {
             BufferedReader br = new BufferedReader(new FileReader(filePath));
             String line = br.readLine();
-            
 
             while (line != null) {
                 if (verbose) {
@@ -87,14 +96,17 @@ public class SerialPortWriter implements Runnable {
                 }
                 CppDefineParser cpp = new CppDefineParser(System.getenv("EDU_HOC_HOME") + "/src/common.h");
                 int msgLength = Integer.parseInt(cpp.findDefine("MAX_MESSAGE_LENGTH"));
-                
-                if(line.length() > msgLength){
+
+                if (line.length() > msgLength) {
                     line = line.substring(0, msgLength);
                 }
-
-                port.writeString(line+"\n");
+                while(line.length() < msgLength){
+                    line = line + "X";
+                }
+                line = g.getNextValue() + "#" + line + "#" ;
+                port.writeString(line + "\n");
                 int jitter = 0;
-                if(delay != 0){
+                if (delay != 0) {
                     jitter = (int) (Math.random() * 10) - 5;
                 }
                 Thread.sleep(TimeUnit.SECONDS.toMillis(delay) + jitter);
@@ -108,7 +120,7 @@ public class SerialPortWriter implements Runnable {
             }
         } catch (IOException ex) {
             if (!silent) {
-                System.err.println("Could not read file  " + ex.toString());                
+                System.err.println("Could not read file  " + ex.toString());
             }
         } catch (SerialPortException ex) {
             if (!silent) {
@@ -116,6 +128,6 @@ public class SerialPortWriter implements Runnable {
             }
         } catch (InterruptedException ex) {
             Logger.getLogger(SerialPortWriter.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
     }
 }

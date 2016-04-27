@@ -35,6 +35,7 @@ public class SerialPortHandler {
     private boolean silent = false;
     private boolean verbose = false;
     protected SerialPortListener listener;
+    private Generator g;
 
     public void setVerbose() {
         verbose = true;
@@ -42,6 +43,10 @@ public class SerialPortHandler {
 
     public void setSilent() {
         silent = true;
+    }
+
+    public Generator getGenerator() {
+        return g;
     }
 
     public void connect(String portName) throws IOException {
@@ -52,6 +57,7 @@ public class SerialPortHandler {
         } catch (SerialPortException ex) {
             System.err.println(ex.toString());
         }
+        g = new Generator();
 
     }
 
@@ -76,7 +82,7 @@ public class SerialPortHandler {
     }
 
     public void write(File file) {
-        SerialPortWriter writer = new SerialPortWriter(port, file);
+        SerialPortWriter writer = new SerialPortWriter(port, file, g);
         if (verbose) {
             writer.setVerbose();
         }
@@ -88,7 +94,7 @@ public class SerialPortHandler {
     }
 
     public void write(File file, Long delay) {
-        SerialPortWriter writer = new SerialPortWriter(port, file);
+        SerialPortWriter writer = new SerialPortWriter(port, file, g);
         if (verbose) {
             writer.setVerbose();
         }

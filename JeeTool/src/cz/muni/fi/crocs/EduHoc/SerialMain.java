@@ -53,6 +53,19 @@ public class SerialMain {
 
     }
 
+    public SerialMain(MoteList motelist, Long time) {
+        this.motelist = motelist;
+        this.time = time;
+    }
+
+    public void listen(){
+        //TODO
+    }
+    
+    public void write(){
+        //TODO
+    }
+    
     public void startSerial() {
         List<SerialPortHandler> handlers = new ArrayList<SerialPortHandler>();
         for (String mote : motelist.getMotes().keySet()) {

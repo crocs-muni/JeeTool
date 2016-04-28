@@ -1,27 +1,26 @@
 /*
-* The MIT License (MIT)
-*
-* Copyright (c) 2015 CRoCS
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-* 
-* The above copyright notice and this permission notice shall be included in all
-* copies or substantial portions of the Software.
-* 
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-* SOFTWARE.
-*/
-
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 CRoCS
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package cz.muni.fi.crocs.EduHoc;
 
 import cz.muni.fi.crocs.EduHoc.uploadTool.MoteList;
@@ -55,6 +54,24 @@ public class UploadMain {
         silent = true;
     }
 
+    //interface version
+    public UploadMain(MoteList motelist, String projectPath) {
+        this.motelist = motelist;
+        this.projectPath = projectPath;
+
+        if (projectPath.charAt(projectPath.length() - 1) == '/') {
+            makefile = new File(projectPath + "Makefile");
+        } else {
+            makefile = new File(projectPath + "/Makefile");
+        }
+
+        if (!makefile.exists()) {
+            System.err.println("makefile not found");
+            return;
+        }
+    }
+
+    //cmd version
     public UploadMain(MoteList motelist, CommandLine cmd) {
         this.motelist = motelist;
         this.cmd = cmd;
@@ -90,6 +107,50 @@ public class UploadMain {
         }
     }
 
+    //interface version
+    public void make() {
+        MakeThread t1 = new MakeThread(projectPath);
+        t1.select(0);
+        t1.run();
+    }
+
+    //interface version
+    public void makeClean() {
+        MakeThread t1 = new MakeThread(projectPath);
+        t1.select(2);
+        t1.run();
+    }
+
+    //interface version
+    public void makeUpload() {
+        List<Thread> threads = new ArrayList<Thread>();
+        make();
+
+        for (String motePath : motelist.getMotes().keySet()) {
+            MakeThread t1 = new MakeThread(projectPath, motePath);
+            if (silent) {
+                t1.setSilent();
+            }
+            if (verbose) {
+                t1.setVerbose();
+            }
+            t1.select(1);
+            //if specified, create new thread for every mote
+            Thread t = new Thread(t1);
+            t.start();
+            threads.add(t);
+        }
+        for (Thread t1 : threads) {
+            try {
+                //System.out.println("waiting for thread "+ t1.toString());
+                t1.join();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(UploadMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    //cmd version
     public void runMake() {
         List<Thread> threads = new ArrayList<Thread>();
         //System.out.println("run Make initiated");
@@ -142,7 +203,7 @@ public class UploadMain {
             }
             t0.select(0);
             t0.run();
-            
+
             //System.out.println("motes:" + motelist.getMotes().toString());
             for (String motePath : motelist.getMotes().keySet()) {
                 MakeThread t1 = new MakeThread(projectPath, motePath);

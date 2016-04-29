@@ -23,6 +23,7 @@
  */
 package cz.muni.fi.crocs.EduHoc;
 
+import cz.muni.fi.crocs.EduHoc.Serial.Generator;
 import cz.muni.fi.crocs.EduHoc.Serial.SerialPortHandler;
 import cz.muni.fi.crocs.EduHoc.uploadTool.MoteList;
 import java.io.File;
@@ -49,6 +50,7 @@ public class SerialMain {
     private MoteList motelist;
     private Long runTime;
     private Map<String, SerialPortHandler> handlersMap;
+    private Generator g;
 
     public SerialMain(CommandLine cmd, MoteList motelist) {
         this.cmd = cmd;
@@ -64,7 +66,12 @@ public class SerialMain {
         this.runTime = time;
     }
 
+    public Generator getG() {
+        return g;
+    }
+
     public void connect() {
+        g = new Generator();
         handlersMap = new TreeMap<String,SerialPortHandler>();
         for (String mote : motelist.getMotes().keySet()) {
             SerialPortHandler handler = null;
@@ -72,7 +79,7 @@ public class SerialMain {
                 //open serial port and connect to it
                 handler = new SerialPortHandler();
                 handler.connect(motelist.getMotes().get(mote));
-
+                handler.setGenerator(g);
                 handlersMap.put(mote,handler);
 
             } catch (IOException ex) {

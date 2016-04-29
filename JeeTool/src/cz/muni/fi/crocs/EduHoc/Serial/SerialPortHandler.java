@@ -45,6 +45,10 @@ public class SerialPortHandler {
         silent = true;
     }
 
+    public void setGenerator(Generator g) {
+        this.g = g;
+    }
+
     public Generator getGenerator() {
         return g;
     }
@@ -56,8 +60,7 @@ public class SerialPortHandler {
             setSerialPortParameters();
         } catch (SerialPortException ex) {
             System.err.println(ex.toString());
-        }
-        g = new Generator();
+        }       
 
     }
 

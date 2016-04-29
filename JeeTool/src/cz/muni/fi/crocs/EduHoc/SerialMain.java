@@ -27,9 +27,14 @@ import cz.muni.fi.crocs.EduHoc.Serial.SerialPortHandler;
 import cz.muni.fi.crocs.EduHoc.uploadTool.MoteList;
 import java.io.File;
 import java.io.IOException;
+import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.cli.CommandLine;
 
 /**
@@ -42,32 +47,79 @@ public class SerialMain {
     private boolean verbose = false;
     private CommandLine cmd;
     private MoteList motelist;
-    private Long time;
+    private Long runTime;
+    private Map<String, SerialPortHandler> handlersMap;
 
     public SerialMain(CommandLine cmd, MoteList motelist) {
         this.cmd = cmd;
         this.motelist = motelist;
 
         //get value of time, if not set, use default 15
-        time = TimeUnit.MINUTES.toMillis(Integer.parseInt(cmd.getOptionValue("T","15")));
+        runTime = TimeUnit.MINUTES.toMillis(Integer.parseInt(cmd.getOptionValue("T", "15")));
 
     }
 
     public SerialMain(MoteList motelist, Long time) {
         this.motelist = motelist;
-        this.time = time;
+        this.runTime = time;
     }
 
-    public void listen(){
+    public void connect() {
+        handlersMap = new TreeMap<String,SerialPortHandler>();
+        for (String mote : motelist.getMotes().keySet()) {
+            SerialPortHandler handler = null;
+            try {
+                //open serial port and connect to it
+                handler = new SerialPortHandler();
+                handler.connect(motelist.getMotes().get(mote));
+
+                handlersMap.put(mote,handler);
+
+            } catch (IOException ex) {
+                System.err.println("port connection to " + mote + " failed");
+            }
+        }
+    }
+
+    public void listen(PipedOutputStream stream) {
         //TODO
+        //create new serial port listener with PipedOutputStream
+    }
+
+    public void write(String dirPath, Long delay) {
+        //TODO
+        if (dirPath.charAt(dirPath.length() - 1) == '/') {
+            dirPath = dirPath.substring(0, dirPath.length() - 1);
+        }
+
+        for (String mote : motelist.getMotes().keySet()) {
+            SerialPortHandler handler = handlersMap.get(mote);
+            File file = new File(dirPath, mote.substring(mote.lastIndexOf("/")));
+            if (file.exists()) {
+                System.out.println("file " + file.getAbsolutePath() + " found, starting write");
+                if (delay != 0) {
+                    handler.write(file, delay);
+                } else {
+                    handler.write(file);
+                }
+            }
+        }
+
     }
     
-    public void write(){
-        //TODO
+    public void close() {
+        try {
+            Thread.sleep(TimeUnit.MINUTES.toMillis(runTime));
+        } catch (InterruptedException ex) {
+            Logger.getLogger(SerialMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        for (SerialPortHandler h : handlersMap.values()) {
+            h.closePort();
+        }        
     }
-    
+
     public void startSerial() {
-        List<SerialPortHandler> handlers = new ArrayList<SerialPortHandler>();
+        List<SerialPortHandler> handlersList = new ArrayList<SerialPortHandler>();
         for (String mote : motelist.getMotes().keySet()) {
             SerialPortHandler handler = null;
             try {
@@ -80,7 +132,7 @@ public class SerialMain {
                 if (silent) {
                     handler.setSilent();
                 }
-                handlers.add(handler);
+                handlersList.add(handler);
 
             } catch (IOException ex) {
                 System.err.println("port connection to " + mote + " failed");
@@ -91,7 +143,7 @@ public class SerialMain {
                 //create file for each node
                 File file = new File(cmd.getOptionValue("l"), mote.substring(mote.lastIndexOf("/")));
 
-                if (verbose) {                   
+                if (verbose) {
                     System.out.println("File " + file.getAbsolutePath() + " created");
                 }
                 handler.listen(file);
@@ -107,7 +159,7 @@ public class SerialMain {
                 File file = new File(prefix, mote.substring(mote.lastIndexOf("/")));
                 if (file.exists()) {
                     System.out.println("file " + file.getAbsolutePath() + " found, starting write");
-                    if(cmd.hasOption("D")){
+                    if (cmd.hasOption("D")) {
                         handler.write(file, Long.parseLong(cmd.getOptionValue("D")));
                     } else {
                         handler.write(file);
@@ -132,9 +184,8 @@ public class SerialMain {
         } catch (InterruptedException ex) {
 
         }
-        
 
-        for (SerialPortHandler h : handlers) {
+        for (SerialPortHandler h : handlersList) {
             h.closePort();
         }
         System.out.println("All closed");

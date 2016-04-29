@@ -126,6 +126,7 @@ public class SerialMain {
     }
 
     public void startSerial() {
+        g = new Generator();
         List<SerialPortHandler> handlersList = new ArrayList<SerialPortHandler>();
         for (String mote : motelist.getMotes().keySet()) {
             SerialPortHandler handler = null;
@@ -139,6 +140,7 @@ public class SerialMain {
                 if (silent) {
                     handler.setSilent();
                 }
+                handler.setGenerator(g);
                 handlersList.add(handler);
 
             } catch (IOException ex) {

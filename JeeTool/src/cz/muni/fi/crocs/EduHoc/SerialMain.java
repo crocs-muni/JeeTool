@@ -50,7 +50,7 @@ public class SerialMain {
     private MoteList motelist;
     private Long runTime;
     private Map<String, SerialPortHandler> handlersMap;
-    private Generator g;
+    //private Generator g;
 
     public SerialMain(CommandLine cmd, MoteList motelist) {
         this.cmd = cmd;
@@ -66,12 +66,13 @@ public class SerialMain {
         this.runTime = time;
     }
 
+    /*
     public Generator getG() {
         return g;
     }
-
+*/
     public void connect() {
-        g = new Generator();
+        //g = new Generator();
         handlersMap = new TreeMap<String,SerialPortHandler>();
         for (String mote : motelist.getMotes().keySet()) {
             SerialPortHandler handler = null;
@@ -79,7 +80,7 @@ public class SerialMain {
                 //open serial port and connect to it
                 handler = new SerialPortHandler();
                 handler.connect(motelist.getMotes().get(mote));
-                handler.setGenerator(g);
+                //handler.setGenerator(g);
                 handlersMap.put(mote,handler);
 
             } catch (IOException ex) {
@@ -126,7 +127,7 @@ public class SerialMain {
     }
 
     public void startSerial() {
-        g = new Generator();
+        //g = new Generator();
         List<SerialPortHandler> handlersList = new ArrayList<SerialPortHandler>();
         for (String mote : motelist.getMotes().keySet()) {
             SerialPortHandler handler = null;
@@ -140,7 +141,7 @@ public class SerialMain {
                 if (silent) {
                     handler.setSilent();
                 }
-                handler.setGenerator(g);
+                //handler.setGenerator(g);
                 handlersList.add(handler);
 
             } catch (IOException ex) {

@@ -48,13 +48,13 @@ public class SerialPortWriter implements Runnable {
     private final SerialPort port;
     private Long delay;
     private int seed;
-    private Generator g;
+    //private Generator g;
 
-    public SerialPortWriter(SerialPort port, File filePath, Generator g) {
+    public SerialPortWriter(SerialPort port, File filePath) {
         this.filePath = filePath;
         this.port = port;
         this.delay = new Long(0);
-        this.g = g;
+        
         
         
     }
@@ -100,10 +100,12 @@ public class SerialPortWriter implements Runnable {
                 if (line.length() > msgLength) {
                     line = line.substring(0, msgLength);
                 }
+                /*
                 while(line.length() < msgLength){
                     line = line + "X";
                 }
-                line = g.getNextValue() + "#" + line + "#" ;
+                */
+                //line = g.getNextValue() + "#" + line + "#" ;
                 port.writeString(line + "\n");
                 int jitter = 0;
                 if (delay != 0) {

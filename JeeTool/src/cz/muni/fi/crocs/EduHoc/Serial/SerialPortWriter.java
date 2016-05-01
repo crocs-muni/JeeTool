@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -100,12 +99,12 @@ public class SerialPortWriter implements Runnable {
                 if (line.length() > msgLength) {
                     line = line.substring(0, msgLength);
                 }
-                /*
-                while(line.length() < msgLength){
-                    line = line + "X";
+                
+                while(line.length() < msgLength/2){
+                    line = line + "#";
                 }
-                */
-                //line = g.getNextValue() + "#" + line + "#" ;
+                
+               
                 port.writeString(line + "\n");
                 int jitter = 0;
                 if (delay != 0) {

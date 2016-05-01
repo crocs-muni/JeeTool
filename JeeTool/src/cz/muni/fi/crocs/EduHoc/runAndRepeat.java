@@ -43,7 +43,7 @@ public class runAndRepeat {
         System.out.println("reading motelist from file " + filepath);
         motes.setVerbose();
         motes.readFile();
-        upload(motes);
+        //upload(motes);
         write(motes);
 
     }

@@ -67,22 +67,30 @@ public class SerialMain {
     }
 
     /*
-    public Generator getG() {
-        return g;
-    }
-*/
+     public Generator getG() {
+     return g;
+     }
+     */
     public void connect() {
         //g = new Generator();
-        handlersMap = new TreeMap<String,SerialPortHandler>();
+
+        System.out.println("Connect to ports");
+        handlersMap = new TreeMap<String, SerialPortHandler>();
         for (String mote : motelist.getMotes().keySet()) {
             SerialPortHandler handler = null;
             try {
                 //open serial port and connect to it
                 handler = new SerialPortHandler();
+                if (verbose) {
+                    handler.setVerbose();
+                }
+                if (silent) {
+                    handler.setSilent();
+                }
                 handler.connect(motelist.getMotes().get(mote));
                 //handler.setGenerator(g);
-                handlersMap.put(mote,handler);
-
+                handlersMap.put(mote, handler);
+                System.out.println("port " + mote + " connected");
             } catch (IOException ex) {
                 System.err.println("port connection to " + mote + " failed");
             }
@@ -99,7 +107,7 @@ public class SerialMain {
         if (dirPath.charAt(dirPath.length() - 1) == '/') {
             dirPath = dirPath.substring(0, dirPath.length() - 1);
         }
-
+        System.out.println("starting write from " + dirPath);
         for (String mote : motelist.getMotes().keySet()) {
             SerialPortHandler handler = handlersMap.get(mote);
             File file = new File(dirPath, mote.substring(mote.lastIndexOf("/")));
@@ -110,11 +118,14 @@ public class SerialMain {
                 } else {
                     handler.write(file);
                 }
+            } else {
+                System.err.println("file " + file.getAbsolutePath() + " not found!");
+
             }
         }
 
     }
-    
+
     public void close() {
         try {
             Thread.sleep(TimeUnit.MINUTES.toMillis(runTime));
@@ -123,7 +134,7 @@ public class SerialMain {
         }
         for (SerialPortHandler h : handlersMap.values()) {
             h.closePort();
-        }        
+        }
     }
 
     public void startSerial() {

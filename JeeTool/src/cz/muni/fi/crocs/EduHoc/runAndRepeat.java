@@ -26,6 +26,10 @@ package cz.muni.fi.crocs.EduHoc;
 import static cz.muni.fi.crocs.EduHoc.Main.ANSI_GREEN;
 import static cz.muni.fi.crocs.EduHoc.Main.ANSI_RESET;
 import cz.muni.fi.crocs.EduHoc.uploadTool.MoteList;
+import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -43,9 +47,26 @@ public class runAndRepeat {
         System.out.println("reading motelist from file " + filepath);
         motes.setVerbose();
         motes.readFile();
-        //upload(motes);
-        write(motes);
-
+        
+        boolean run = true;
+        Scanner s = new Scanner(System.in);
+        do{
+            upload(motes);
+            //write(motes);
+            try {
+                Thread.sleep(TimeUnit.MINUTES.toMillis(1));
+            } catch (InterruptedException ex) {
+                Logger.getLogger(runAndRepeat.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if(s.hasNextLine()){
+                String input = s.nextLine();
+                if(input.equals("stop")){
+                    run = false;
+                }
+            }
+            
+        }while(run);
+        
     }
 
     public static void upload(MoteList motes) {

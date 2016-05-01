@@ -34,30 +34,32 @@ import cz.muni.fi.crocs.EduHoc.uploadTool.MoteList;
 public class runAndRepeat {
 
     public static final String PATH = System.getenv("EDU_HOC_HOME") + "/src/Scenarios/01";
-    public static final String WRITE_FILES = System.getenv("EDU_HOC_HOME") + "/AdditionalScripts/";
+    public static final String WRITE_FILES = System.getenv("EDU_HOC_HOME") + "/src/AdditionalScripts/";
 
     public static void main(String[] args) {
         System.out.println(ANSI_GREEN + "EduHoc home is: " + System.getenv("EDU_HOC_HOME") + "\n" + ANSI_RESET);
-
-        run();
-
-    }
-
-    public static void run() {
-        //make upload
-        String filepath = System.getenv("EDU_HOC_HOME") + "/config/motePathHome.txt";
+        String filepath = System.getenv("EDU_HOC_HOME") + "/config/motePaths.txt";
         MoteList motes = new MoteList(filepath);
         System.out.println("reading motelist from file " + filepath);
         motes.setVerbose();
         motes.readFile();
+        upload(motes);
+        write(motes);
+
+    }
+
+    public static void upload(MoteList motes) {
+        //make upload
         UploadMain upload = new UploadMain(motes, PATH);
         upload.setVerbose();
-        upload.makeUpload();
-
-        //listen + write
-        SerialMain serial = new SerialMain(motes, (long) 15);
+        upload.makeUpload(); 
+    }
+    
+    public static void write(MoteList motes){
+        SerialMain serial = new SerialMain(motes, (long) 1);
+        serial.setVerbose();
         serial.connect();
         serial.write(WRITE_FILES, (long) 1);
-
+        serial.close();
     }
 }

@@ -90,9 +90,7 @@ public class SerialPortWriter implements Runnable {
             String line = br.readLine();
 
             while (line != null) {
-                if (verbose) {
-                    System.out.println("To serial from file " + filePath + " " + Main.ANSI_CYAN + line + Main.ANSI_RESET);
-                }
+                
                 CppDefineParser cpp = new CppDefineParser(System.getenv("EDU_HOC_HOME") + "/src/common.h");
                 int msgLength = Integer.parseInt(cpp.findDefine("MAX_MESSAGE_LENGTH"));
 
@@ -103,7 +101,9 @@ public class SerialPortWriter implements Runnable {
                 if(line.length() < msgLength /2){
                     continue;
                 }
-
+                if (verbose) {
+                    System.out.println("To serial from file " + filePath + " " + Main.ANSI_CYAN + line + Main.ANSI_RESET);
+                }
                 
                 String write = line + "\n";
                 port.writeBytes(write.getBytes(), write.length());

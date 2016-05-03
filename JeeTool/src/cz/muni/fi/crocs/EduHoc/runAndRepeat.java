@@ -48,20 +48,22 @@ public class runAndRepeat {
         motes.setVerbose();
         motes.readFile();
         
-        boolean run = true;
-        Scanner s = new Scanner(System.in);
-        do{
+        //boolean run = true;
+        //Scanner s = new Scanner(System.in);
+        //do{
+            
             upload(motes);
             write(motes);
+            /*
             try {
                 System.out.println("Sleeping, can interrupt now");
                 Thread.sleep(TimeUnit.MINUTES.toMillis(5));
             } catch (InterruptedException ex) {
                 Logger.getLogger(runAndRepeat.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+            */
             System.out.println("Sleep complete");
-        }while(run);
+        //}while(run);
         
     }
 
@@ -73,7 +75,7 @@ public class runAndRepeat {
     }
     
     public static void write(MoteList motes){
-        SerialMain serial = new SerialMain(motes, (long) 15);
+        SerialMain serial = new SerialMain(motes, (long) 10);
         serial.setVerbose();
         serial.connect();
         serial.write(WRITE_FILES, (long) 1);

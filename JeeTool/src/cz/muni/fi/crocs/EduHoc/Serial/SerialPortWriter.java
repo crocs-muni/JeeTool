@@ -99,11 +99,10 @@ public class SerialPortWriter implements Runnable {
                 if (line.length() > msgLength) {
                     line = line.substring(0, msgLength);
                 }
-                
-                while(line.length() < msgLength/2){
-                    line = line + "#";
+                           
+                if(line.length() < msgLength /2){
+                    continue;
                 }
-                
                
                 port.writeString(line + "\n");
                 int jitter = 0;

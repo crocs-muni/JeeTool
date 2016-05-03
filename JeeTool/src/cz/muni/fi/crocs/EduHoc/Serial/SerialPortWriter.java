@@ -23,6 +23,7 @@
  */
 package cz.muni.fi.crocs.EduHoc.Serial;
 
+import com.fazecast.jSerialComm.SerialPort;
 import cz.muni.fi.crocs.EduHoc.Main;
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,8 +33,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jssc.SerialPort;
-import jssc.SerialPortException;
+
 
 /**
  *
@@ -104,8 +104,8 @@ public class SerialPortWriter implements Runnable {
                     line = line + "#";
                 }
                 
-               
-                port.writeString(line + "\n");
+                String write = line + "\n";
+                port.writeBytes(write.getBytes(), write.length());
                 int jitter = 0;
                 if (delay != 0) {
                     jitter = (int) (Math.random() * 10) - 5;
@@ -122,11 +122,7 @@ public class SerialPortWriter implements Runnable {
         } catch (IOException ex) {
             if (!silent) {
                 System.err.println("Could not read file  " + ex.toString());
-            }
-        } catch (SerialPortException ex) {
-            if (!silent) {
-                System.err.println("Serial port error  " + ex.toString());
-            }
+            }        
         } catch (InterruptedException ex) {
             Logger.getLogger(SerialPortWriter.class.getName()).log(Level.SEVERE, null, ex);
         }

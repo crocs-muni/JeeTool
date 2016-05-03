@@ -23,10 +23,11 @@
  */
 package cz.muni.fi.crocs.EduHoc.Serial;
 
+import com.fazecast.jSerialComm.SerialPort;
 import java.io.File;
 import java.io.IOException;
-import jssc.SerialPort;
-import jssc.SerialPortException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SerialPortHandler {
 
@@ -44,29 +45,27 @@ public class SerialPortHandler {
     public void setSilent() {
         silent = true;
     }
-/*
-    public void setGenerator(Generator g) {
-        this.g = g;
-    }
+    /*
+     public void setGenerator(Generator g) {
+     this.g = g;
+     }
 
-    public Generator getGenerator() {
-        return g;
-    }
-*/
+     public Generator getGenerator() {
+     return g;
+     }
+     */
+
     public void connect(String portName) throws IOException {
-        port = new SerialPort(portName);
-        try {
-            port.openPort();
-            setSerialPortParameters();
-        } catch (SerialPortException ex) {
-            System.err.println(ex.toString());
-        }       
+        port = SerialPort.getCommPort(portName);
+        port.openPort();
+        setSerialPortParameters();
 
     }
 
     public void listen(File file) {
-        try {
+      
 
+        try {
             //add listener
             listener = new SerialPortListener(port, file);
             if (verbose) {
@@ -75,13 +74,11 @@ public class SerialPortHandler {
             if (silent) {
                 listener.setSilent();
             }
-            port.addEventListener(listener);
-
-        } catch (SerialPortException ex) {
-
+            port.addDataListener(listener);
         } catch (IOException ex) {
-
+            Logger.getLogger(SerialPortHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
     public void write(File file) {
@@ -109,14 +106,12 @@ public class SerialPortHandler {
     }
 
     public void closePort() {
-        try {
+        
             if (listener != null) {
                 listener.close();
             }
             port.closePort();
-        } catch (SerialPortException ex) {
-            //TODO print
-        }
+        
     }
 
     /**
@@ -125,11 +120,9 @@ public class SerialPortHandler {
     private void setSerialPortParameters() throws IOException {
         CppDefineParser cpp = new CppDefineParser(System.getenv("EDU_HOC_HOME") + "/src/common.h");
         int baudRate = Integer.parseInt(cpp.findDefine("SERIAL_FREQUENCY"));
-        try {
-            port.setParams(baudRate, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-        } catch (SerialPortException ex) {
-            // TODO print
-        }
+        port.setBaudRate(baudRate);
+        //port.setComPortParameters(baudRate, SerialPort.DATABITS_8, SerialPort.ONE_STOP_BIT, SerialPort.NO_PARITY);
+        
     }
 
 }

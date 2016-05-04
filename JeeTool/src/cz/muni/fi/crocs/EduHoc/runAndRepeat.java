@@ -37,7 +37,8 @@ import java.util.logging.Logger;
  */
 public class runAndRepeat {
 
-    public static final String PATH = System.getenv("EDU_HOC_HOME") + "/src/Scenarios/01";
+    public static final String SCPATH = System.getenv("EDU_HOC_HOME") + "/src/Scenarios/01";
+    public static final String BPATH = System.getenv("EDU_HOC_HOME") + "/src/Blink";
     public static final String WRITE_FILES = System.getenv("EDU_HOC_HOME") + "/src/AdditionalScripts/";
 
     public static void main(String[] args) {
@@ -47,34 +48,46 @@ public class runAndRepeat {
         System.out.println("reading motelist from file " + filepath);
         motes.setVerbose();
         motes.readFile();
-        
+
         //boolean run = true;
         //Scanner s = new Scanner(System.in);
         //do{
-            
-            upload(motes);
-            write(motes);
+        //uploadSc(motes);
+       if("sc".equals(args[0])){
+           uploadSc(motes);
+       } else {
+           uploadB(motes);
+       }
+            //write(motes);
             /*
-            try {
-                System.out.println("Sleeping, can interrupt now");
-                Thread.sleep(TimeUnit.MINUTES.toMillis(5));
-            } catch (InterruptedException ex) {
-                Logger.getLogger(runAndRepeat.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            */
-            System.out.println("Sleep complete");
+         try {
+         System.out.println("Sleeping, can interrupt now");
+         Thread.sleep(TimeUnit.MINUTES.toMillis(5));
+         } catch (InterruptedException ex) {
+         Logger.getLogger(runAndRepeat.class.getName()).log(Level.SEVERE, null, ex);
+         }
+         */
+        System.out.println("Sleep complete");
         //}while(run);
-        
+
     }
 
-    public static void upload(MoteList motes) {
+    public static void uploadSc(MoteList motes) {
         //make upload
-        UploadMain upload = new UploadMain(motes, PATH);
+        UploadMain upload = new UploadMain(motes, SCPATH);
         upload.setVerbose();
-        upload.makeUpload(); 
+        upload.makeUpload();
     }
+
+    public static void uploadB(MoteList motes) {
+        //make upload
+        UploadMain upload = new UploadMain(motes, BPATH);
+        upload.setVerbose();
+        upload.makeUpload();
+    }
+
     
-    public static void write(MoteList motes){
+    public static void write(MoteList motes) {
         SerialMain serial = new SerialMain(motes, (long) 10);
         serial.setVerbose();
         serial.connect();

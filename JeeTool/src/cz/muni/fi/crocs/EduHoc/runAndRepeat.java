@@ -37,8 +37,8 @@ import java.util.logging.Logger;
  */
 public class runAndRepeat {
 
-    public static final String SCPATH = System.getenv("EDU_HOC_HOME") + "/src/Scenarios/01";
-    public static final String BPATH = System.getenv("EDU_HOC_HOME") + "/src/Blink";
+    public static final String SCPATH = System.getenv("EDU_HOC_HOME") + "/src/Scenarios/02";
+    public static final String BPATH = System.getenv("EDU_HOC_HOME") + "/src/EepromCheck";
     public static final String WRITE_FILES = System.getenv("EDU_HOC_HOME") + "/src/AdditionalScripts/";
 
     public static void main(String[] args) {

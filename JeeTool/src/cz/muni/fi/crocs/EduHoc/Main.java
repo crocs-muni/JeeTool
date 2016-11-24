@@ -67,9 +67,9 @@ public class Main {
         boolean verbose = cmd.hasOption("v");
 
         if (!silent) {
-            System.out.println(ANSI_GREEN + "EduHoc home is: " + System.getenv("EDU_HOC_HOME") + "\n" + ANSI_RESET);
+            //System.out.println(ANSI_GREEN + "EduHoc home is: " + System.getenv("EDU_HOC_HOME") + "\n" + ANSI_RESET);
         }
-
+        
         //help
         if (cmd.hasOption("h")) {
             OptionsMain.printHelp(options);
@@ -81,7 +81,8 @@ public class Main {
         if (cmd.hasOption("a")) {
             filepath = cmd.getOptionValue("a");
         } else {
-            filepath = System.getenv("EDU_HOC_HOME") + "/config/motePaths.txt";
+            //filepath = System.getenv("EDU_HOC_HOME") + "/config/motePaths.txt";
+            filepath = "/opt/motePaths.txt";
         }
 
         //create motelist

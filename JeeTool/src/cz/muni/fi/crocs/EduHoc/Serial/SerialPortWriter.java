@@ -24,7 +24,7 @@
 package cz.muni.fi.crocs.EduHoc.Serial;
 
 import com.fazecast.jSerialComm.SerialPort;
-import cz.muni.fi.crocs.EduHoc.Main;
+import cz.muni.fi.crocs.JeeTool.Main;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;

@@ -22,7 +22,7 @@
 * SOFTWARE.
 */
 
-package cz.muni.fi.crocs.EduHoc;
+package cz.muni.fi.crocs.JeeTool;
 
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
@@ -38,7 +38,7 @@ public class OptionsMain {
     public static Options createOptions() {
         Option help = new Option("h", "help", false, "show help and exit");
 
-        Option motes = new Option("a", "motes", true, "path to alternative file of motes, default setting is stored in config/motePaths.txt");
+        Option motes = new Option("a", "motes", true, "path to alternative file of motes, default setting is stored in /opt/motePaths.txt");
         Option ids = new Option("i", "id", true, "select IDs of nodes from motelist, use comma separated list of IDs or ID ranges, such as 1,3,5-7,9-15");
 
         Option detect = new Option("d", "detect", false, "Perform node detection only");
@@ -49,23 +49,15 @@ public class OptionsMain {
         output.addOption(verbose);
         output.addOption(silent);
 
-        Option make = new Option("m", "make", true, "make target at this path, directory must contain Makefile");
-        Option makeClean = new Option("c", "make_clean", true, "make clean target at this path, directory must contain Makefile");
-        Option makeUpload = new Option("u", "make_upload", true, "make target  at this path and upload to nodes, directory must contain Makefile");
+        Option make = new Option("m", "make", true, "make target at this path");
+        Option makeClean = new Option("c", "make_clean", true, "make clean target at this path");
+        Option makeUpload = new Option("u", "make_upload", true, "make target  at this path and upload to nodes");
         Option threads = new Option("t", "threads", false, "use threads for paralell upload");
 
         OptionGroup makeGroup = new OptionGroup();
         makeGroup.addOption(make);
         makeGroup.addOption(makeUpload);
         makeGroup.addOption(makeClean);
-
-        Option listen = new Option("l", "listen", true, "connect to serial and save stream to files, set path to directory for files");
-        Option write = new Option("w", "write", true, "write to serial now or after upload, directory must contain at least one file with same name as node");
-        
-        Option execute = new Option("E", "execute", true, "path to shell script to be executed in phase 3");
-        Option time = new Option("T", "time", true, "countdown in minutes for serial phase, default is 15 minutes, after this time, serial connection closes");
-        Option delay = new Option("D", "delay", true, "delay in seconds between each line send to serial, usefull for message timing");
-        time.setType(int.class);
 
         Options options = new Options();
 
@@ -75,26 +67,18 @@ public class OptionsMain {
         options.addOption(detect);
 
         options.addOptionGroup(output);
-
         options.addOptionGroup(makeGroup);
 
-        options.addOption(threads);
-        options.addOption(write);
-        options.addOption(listen);
-        
-        options.addOption(execute);
-        options.addOption(time);
-        options.addOption(delay);
+        options.addOption(threads);       
         return options;
     }
 
     public static void printHelp(Options options) {
-        String header = "JeeTool, tool for mass management of arduino network\n\n"
-                + "There are four phases : \n 1 - node detection \n 2 - make execution \n 3 - script execution \n 4 - serial listen / write\n\n";
+        String header = "JeeTool, tool for mass management of arduino network\n\n";
         String footer = "";
 
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("jeetool", header, options, footer, false);
+        formatter.printHelp("JeeTool", header, options, footer, false);
     }
     
     

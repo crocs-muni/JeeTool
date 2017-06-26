@@ -21,9 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package cz.muni.fi.crocs.EduHoc;
+package cz.muni.fi.crocs.JeeTool;
 
-import cz.muni.fi.crocs.EduHoc.uploadTool.MoteList;
+import cz.muni.fi.crocs.JeeTool.upload.MoteList;
 import cz.muni.fi.crocs.EduHoc.uploadTool.MakeThread;
 import java.io.File;
 import java.util.ArrayList;

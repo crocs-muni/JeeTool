@@ -24,7 +24,7 @@
 
 package cz.muni.fi.crocs.EduHoc.uploadTool;
 
-import cz.muni.fi.crocs.EduHoc.Main;
+import cz.muni.fi.crocs.JeeTool.Main;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;

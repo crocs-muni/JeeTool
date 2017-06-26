@@ -22,9 +22,9 @@
 * SOFTWARE.
 */
 
-package cz.muni.fi.crocs.EduHoc.uploadTool;
+package cz.muni.fi.crocs.JeeTool.upload;
 
-import cz.muni.fi.crocs.EduHoc.Main;
+import cz.muni.fi.crocs.JeeTool.Main;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;

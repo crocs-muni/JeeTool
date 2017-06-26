@@ -26,7 +26,7 @@ package cz.muni.fi.crocs.EduHoc.Serial;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
-import cz.muni.fi.crocs.EduHoc.Main;
+import cz.muni.fi.crocs.JeeTool.Main;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;

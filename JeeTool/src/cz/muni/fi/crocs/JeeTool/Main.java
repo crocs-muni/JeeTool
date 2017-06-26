@@ -22,10 +22,10 @@
 * SOFTWARE.
 */
 
-package cz.muni.fi.crocs.EduHoc;
+package cz.muni.fi.crocs.JeeTool;
 
+import cz.muni.fi.crocs.JeeTool.upload.MoteList;
 import cz.muni.fi.crocs.EduHoc.uploadTool.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.cli.CommandLine;
@@ -65,11 +65,7 @@ public class Main {
         }
         boolean silent = cmd.hasOption("s");
         boolean verbose = cmd.hasOption("v");
-
-        if (!silent) {
-            //System.out.println(ANSI_GREEN + "EduHoc home is: " + System.getenv("EDU_HOC_HOME") + "\n" + ANSI_RESET);
-        }
-        
+                
         //help
         if (cmd.hasOption("h")) {
             OptionsMain.printHelp(options);
@@ -81,7 +77,6 @@ public class Main {
         if (cmd.hasOption("a")) {
             filepath = cmd.getOptionValue("a");
         } else {
-            //filepath = System.getenv("EDU_HOC_HOME") + "/config/motePaths.txt";
             filepath = "/opt/motePaths.txt";
         }
 
@@ -130,33 +125,6 @@ public class Main {
             UploadMain upload = new UploadMain(moteList, cmd);
             upload.runMake();
         }
-
-        //if execute command
-        if (cmd.hasOption("E")) {
-            try {
-                ExecuteShellCommand com = new ExecuteShellCommand();
-                if (verbose) {
-                    System.out.println("Executing shell command " + cmd.getOptionValue("E"));
-                }
-
-                com.executeCommand(cmd.getOptionValue("E"));
-            } catch (IOException ex) {
-                System.err.println("Execute command " + cmd.getOptionValue("E") + " failed");
-            }
-        }
-
-        //if serial
-        if (cmd.hasOption("l") || cmd.hasOption("w")) {
-            SerialMain serial = new SerialMain(cmd, moteList);
-            if (silent) {
-                serial.setSilent();
-            }
-            if (verbose) {
-                serial.setVerbose();
-            }
-            serial.startSerial();            
-        }
-
     }
 
 }

@@ -26,6 +26,8 @@ package cz.muni.fi.crocs.JeeTool.upload;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -36,6 +38,9 @@ public final class ShellExec {
     //static class, only private constructor (not publicly accessible)
     private ShellExec() {
     }
+
+    private static final String ARDUINO_PATH = "/opt/arduino-1.8.3/arduino";
+    private static final String BOARD = "--board arduino:avr:mini:cpu=atmega328";
 
     public static void executeCommand(String command, boolean silent) throws IOException {
 
@@ -59,17 +64,27 @@ public final class ShellExec {
     public static void executeCommand(String command) throws IOException {
         executeCommand(command, true);
     }
-    
-    public static void verify(String file){
-        
+
+    public static void verify(String file) throws IOException {
+        String command = ARDUINO_PATH;
+        //TODO build path?
+        command = command.concat(" --verify");
+        command = command.concat(" " + file);
+        executeCommand(command);
     }
     
-    private static Thread upload(String mote, String file){
-        
+    public static void upload(String mote, String file, boolean silent) throws IOException {
+        String command = ARDUINO_PATH;
+        //TODO build path?
+        command = command.concat(" " + BOARD);
+        command = command.concat(" --port " + mote);
+        command = command.concat(" --upload");
+        command = command.concat(" " + file);
+        executeCommand(command, silent);
     }
-    
-    public static void upload(MoteList list, String file){
-        
+
+    public static void upload(String mote, String file) throws IOException {
+        upload(mote, file, true);
     }
-    
+
 }

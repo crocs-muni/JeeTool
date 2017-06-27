@@ -40,7 +40,7 @@ public class UploadMain {
 
     private MoteList motelist;
     private File makefile;
-    private String projectPath;
+    private String projectFile;
     private CommandLine cmd;
 
     private boolean silent = false;
@@ -57,7 +57,7 @@ public class UploadMain {
     //interface version
     public UploadMain(MoteList motelist, String projectPath) {
         this.motelist = motelist;
-        this.projectPath = projectPath;
+        this.projectFile = projectPath;
 
         if (projectPath.charAt(projectPath.length() - 1) == '/') {
             makefile = new File(projectPath + "Makefile");
@@ -78,24 +78,24 @@ public class UploadMain {
 
         if (cmd.hasOption("m")) {
             //System.out.println("running make");
-            projectPath = cmd.getOptionValue("m");
+            projectFile = cmd.getOptionValue("m");
         }
         if (cmd.hasOption("c")) {
             //System.out.println("running make clean");
-            projectPath = cmd.getOptionValue("c");
+            projectFile = cmd.getOptionValue("c");
         }
         if (cmd.hasOption("u")) {
             //System.out.println("running make upload");
-            projectPath = cmd.getOptionValue("u");
+            projectFile = cmd.getOptionValue("u");
         }
 
-        if (projectPath.charAt(projectPath.length() - 1) == '/') {
-            makefile = new File(projectPath + "Makefile");
+        if (projectFile.charAt(projectFile.length() - 1) == '/') {
+            makefile = new File(projectFile + "Makefile");
         } else {
-            makefile = new File(projectPath + "/Makefile");
+            makefile = new File(projectFile + "/Makefile");
         }
         if (!silent) {
-            System.out.println("processing makefile for project at " + projectPath);
+            System.out.println("processing makefile for project at " + projectFile);
         }
 
         if (!makefile.exists()) {
@@ -109,14 +109,14 @@ public class UploadMain {
 
     //interface version
     public void make() {
-        MakeThread t1 = new MakeThread(projectPath);
+        MakeThread t1 = new MakeThread(projectFile);
         t1.select(0);
         t1.run();
     }
 
     //interface version
     public void makeClean() {
-        MakeThread t1 = new MakeThread(projectPath);
+        MakeThread t1 = new MakeThread(projectFile);
         t1.select(2);
         t1.run();
     }
@@ -127,7 +127,7 @@ public class UploadMain {
         make();
 
         for (String motePath : motelist.getMotes().keySet()) {
-            MakeThread t1 = new MakeThread(projectPath, motePath);
+            MakeThread t1 = new MakeThread(projectFile, motePath);
             if (silent) {
                 t1.setSilent();
             }
@@ -156,7 +156,7 @@ public class UploadMain {
         //System.out.println("run Make initiated");
         if (cmd.hasOption("m")) {
             //System.out.println("running make");
-            MakeThread t1 = new MakeThread(projectPath);
+            MakeThread t1 = new MakeThread(projectFile);
             if (silent) {
                 t1.setSilent();
             }
@@ -168,7 +168,7 @@ public class UploadMain {
 
         } else if (cmd.hasOption("c")) {
             //System.out.println("running make clean"); 
-            MakeThread t1 = new MakeThread(projectPath);
+            MakeThread t1 = new MakeThread(projectFile);
             if (silent) {
                 t1.setSilent();
             }
@@ -181,7 +181,7 @@ public class UploadMain {
         } else if (cmd.hasOption("u") && (!cmd.hasOption("t"))) {
             //System.out.println("running make upload");
             for (String motePath : motelist.getMotes().keySet()) {
-                MakeThread t1 = new MakeThread(projectPath, motePath);
+                MakeThread t1 = new MakeThread(projectFile, motePath);
                 if (silent) {
                     t1.setSilent();
                 }
@@ -194,7 +194,7 @@ public class UploadMain {
 
         } else if (cmd.hasOption("u") && cmd.hasOption("t")) {
             //System.out.println("running make upload threads");
-            MakeThread t0 = new MakeThread(projectPath);
+            MakeThread t0 = new MakeThread(projectFile);
             if (silent) {
                 t0.setSilent();
             }
@@ -206,7 +206,7 @@ public class UploadMain {
 
             //System.out.println("motes:" + motelist.getMotes().toString());
             for (String motePath : motelist.getMotes().keySet()) {
-                MakeThread t1 = new MakeThread(projectPath, motePath);
+                MakeThread t1 = new MakeThread(projectFile, motePath);
                 if (silent) {
                     t1.setSilent();
                 }

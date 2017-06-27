@@ -20,12 +20,11 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
-*/
-
+ */
 package cz.muni.fi.crocs.JeeTool;
 
 import cz.muni.fi.crocs.JeeTool.upload.MoteList;
-import cz.muni.fi.crocs.EduHoc.uploadTool.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.cli.CommandLine;
@@ -45,11 +44,23 @@ public class Main {
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_CYAN = "\u001B[36m";
 
+    public static void checkDependencies() {
+        File f = new File("/opt/arduino-1.8.3/");
+        if (f.exists() && f.isDirectory()) {
+            System.err.println("Arduino dir found.");
+        } else {
+            System.err.println("Arduino dir not found, please download Arduino to /opt/arduino-1.8.3/");
+            System.exit(1);
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         System.out.println("JeeTool \n");
+
+        checkDependencies();
 
         Options options = OptionsMain.createOptions();
 
@@ -65,7 +76,7 @@ public class Main {
         }
         boolean silent = cmd.hasOption("s");
         boolean verbose = cmd.hasOption("v");
-                
+
         //help
         if (cmd.hasOption("h")) {
             OptionsMain.printHelp(options);
@@ -93,16 +104,15 @@ public class Main {
             System.out.println("reading motelist from file " + filepath);
         }
 
-        
-        if(cmd.hasOption("i")){
+        if (cmd.hasOption("i")) {
             List<Integer> ids = new ArrayList<Integer>();
             String arg = cmd.getOptionValue("i");
-            String [] IdArgs = arg.split(",");
-            for(String s : IdArgs){
-                if(s.contains("-")){
+            String[] IdArgs = arg.split(",");
+            for (String s : IdArgs) {
+                if (s.contains("-")) {
                     int start = Integer.parseInt(s.substring(0, s.indexOf("-")));
-                    int end = Integer.parseInt(s.substring(s.indexOf("-")+1, s.length()));
-                    for(int i = start; i <= end; i++){
+                    int end = Integer.parseInt(s.substring(s.indexOf("-") + 1, s.length()));
+                    for (int i = start; i <= end; i++) {
                         ids.add(i);
                     }
                 } else {
@@ -111,10 +121,9 @@ public class Main {
             }
             moteList.setIds(ids);
         }
-        
-        
+
         moteList.readFile();
-        
+
         if (cmd.hasOption("d")) {
             //only detect nodes
             return;

@@ -20,8 +20,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
-*/
-
+ */
 package cz.muni.fi.crocs.JeeTool.upload;
 
 import cz.muni.fi.crocs.JeeTool.Main;
@@ -76,42 +75,36 @@ public class MoteList {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(filepath));
             String line = reader.readLine();
-            while (line != null) {
+            while (line != null && line.length() > 0 && line.charAt(0) != '#') {
 
-                if (line.charAt(0) != '#') {
-
-                    File mote = new File(line);
-                    if (mote.exists()) {
-                        if (ids != null) {
-                            int id = Integer.parseInt(line.replaceAll("[\\D]", ""));
-                            if (ids.contains(id)) {
-                                if (!silent) {
-                                    System.out.println(Main.ANSI_GREEN + "mote " + line + " found" + Main.ANSI_RESET);
-                                }
-                                motes.put(line, mote.getCanonicalPath());
-                            }
-                        } else {
-
+                File mote = new File(line);
+                if (mote.exists()) {
+                    if (ids != null) {
+                        int id = Integer.parseInt(line.replaceAll("[\\D]", ""));
+                        if (ids.contains(id)) {
                             if (!silent) {
                                 System.out.println(Main.ANSI_GREEN + "mote " + line + " found" + Main.ANSI_RESET);
                             }
                             motes.put(line, mote.getCanonicalPath());
                         }
                     } else {
-                        if (ids != null) {
-                            int id = Integer.parseInt(line.replaceAll("[\\D]", ""));
-                            if (ids.contains(id)) {
-                                if (verbose) {
-                                    System.out.println(Main.ANSI_RED + "mote " + line + " not found" + Main.ANSI_RESET);
-                                }
-                            }
-                        } else {
-                            if (verbose) {
-                                System.out.println(Main.ANSI_RED + "mote " + line + " not found" + Main.ANSI_RESET);
-                            }
+
+                        if (!silent) {
+                            System.out.println(Main.ANSI_GREEN + "mote " + line + " found" + Main.ANSI_RESET);
+                        }
+                        motes.put(line, mote.getCanonicalPath());
+                    }
+                } else if (ids != null) {
+                    int id = Integer.parseInt(line.replaceAll("[\\D]", ""));
+                    if (ids.contains(id)) {
+                        if (verbose) {
+                            System.out.println(Main.ANSI_RED + "mote " + line + " not found" + Main.ANSI_RESET);
                         }
                     }
+                } else if (verbose) {
+                    System.out.println(Main.ANSI_RED + "mote " + line + " not found" + Main.ANSI_RESET);
                 }
+
                 line = reader.readLine();
             }
 

@@ -50,14 +50,12 @@ public class OptionsMain {
         output.addOption(silent);
 
         Option make = new Option("m", "make", true, "make target at this path, .ino file required");
-        Option makeClean = new Option("c", "make_clean", true, "make clean target at this path, .ino file required");
         Option makeUpload = new Option("u", "make_upload", true, "make target  at this path and upload to nodes, .ino file required");
         Option threads = new Option("t", "threads", false, "use threads for paralell upload");
 
         OptionGroup makeGroup = new OptionGroup();
         makeGroup.addOption(make);
         makeGroup.addOption(makeUpload);
-        makeGroup.addOption(makeClean);
 
         Options options = new Options();
 

@@ -24,8 +24,6 @@
 package cz.muni.fi.crocs.JeeTool.upload;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

@@ -26,8 +26,6 @@ package cz.muni.fi.crocs.JeeTool.upload;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
